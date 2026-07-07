@@ -31,6 +31,7 @@ const QUICK_ACTIONS = [
     iconBg: 'bg-blue-muted',
     title: 'Start Auto-Applying',
     description: 'Set up your preferences and let AI apply for you.',
+    href: null,
   },
   {
     icon: ClipboardDocumentListIcon,
@@ -38,6 +39,7 @@ const QUICK_ACTIONS = [
     iconBg: 'bg-emerald-50',
     title: 'View Applications',
     description: 'Track every job application in one place.',
+    href: null,
   },
   {
     icon: Cog6ToothIcon,
@@ -45,6 +47,7 @@ const QUICK_ACTIONS = [
     iconBg: 'bg-violet-50',
     title: 'Configure Profile',
     description: 'Upload your resume and set job preferences.',
+    href: '/profile',
   },
 ]
 
@@ -142,23 +145,38 @@ export default function DashboardPage() {
         <div>
           <p className="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-4">Quick Actions</p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {QUICK_ACTIONS.map((action) => (
-              <div
-                key={action.title}
-                className="group bg-white border border-slate-200 rounded-2xl p-6 shadow-sm cursor-default select-none"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl ${action.iconBg} ${action.iconColor}`}>
-                    <action.icon className="w-5 h-5" />
+            {QUICK_ACTIONS.map((action) => {
+              const inner = (
+                <>
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl ${action.iconBg} ${action.iconColor}`}>
+                      <action.icon className="w-5 h-5" />
+                    </div>
+                    <span className={`text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full ${action.href ? 'bg-blue-muted text-blue-accent' : 'bg-slate-100 text-slate-500'}`}>
+                      {action.href ? 'Set up →' : 'Coming soon'}
+                    </span>
                   </div>
-                  <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
-                    Coming soon
-                  </span>
+                  <h3 className="text-base font-bold text-navy">{action.title}</h3>
+                  <p className="text-sm text-slate-600 mt-1.5">{action.description}</p>
+                </>
+              )
+              return action.href ? (
+                <Link
+                  key={action.title}
+                  href={action.href}
+                  className="group bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-blue-accent hover:shadow-md hover:-translate-y-0.5 transition-all duration-150 cursor-pointer select-none"
+                >
+                  {inner}
+                </Link>
+              ) : (
+                <div
+                  key={action.title}
+                  className="group bg-white border border-slate-200 rounded-2xl p-6 shadow-sm cursor-default select-none"
+                >
+                  {inner}
                 </div>
-                <h3 className="text-base font-bold text-navy">{action.title}</h3>
-                <p className="text-sm text-slate-600 mt-1.5">{action.description}</p>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
 

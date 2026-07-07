@@ -2,5 +2,5 @@ services:
   app:
     image: ${IMAGE_NAME}
     ports:
-      - "4000:4000"
+      - "54000:4000"
     restart: always

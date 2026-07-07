@@ -39,4 +39,11 @@ export const api = {
     const res = await client.delete<T>(path)
     return res.data
   },
+
+  postForm: async <T>(path: string, formData: FormData): Promise<T> => {
+    const res = await client.post<T>(path, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return res.data
+  },
 }
