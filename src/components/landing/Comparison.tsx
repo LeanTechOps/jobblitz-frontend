@@ -51,31 +51,6 @@ export default function Comparison() {
           </p>
         </div>
 
-        {/* Verdict cards — placed ABOVE the table for visual impact */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-          {VERDICTS.map((v, i) => (
-            <motion.div
-              key={v.label}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "0px 0px -60px 0px" }}
-              transition={{ delay: i * 0.08, duration: 0.4, ease: 'easeOut' }}
-              className={`rounded-2xl p-5 text-center border transition-all duration-200 cursor-default ${
-                v.dark
-                  ? 'bg-blue-accent border-blue-accent text-white shadow-xl shadow-blue-200 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-blue-200'
-                  : 'bg-slate-50 border-slate-200 hover:-translate-y-1 hover:shadow-md hover:border-slate-300'
-              }`}
-            >
-              <p className="text-2xl mb-1.5">{v.emoji}</p>
-              <p className={`text-xs font-semibold uppercase tracking-widest mb-1 ${v.dark ? 'text-blue-200' : 'text-slate-500'}`}>
-                {v.label}
-              </p>
-              <p className={`font-bold text-sm ${v.dark ? 'text-white' : 'text-navy'}`}>{v.verdict}</p>
-              <p className={`text-xs mt-1 ${v.dark ? 'text-blue-100' : 'text-slate-500'}`}>{v.sub}</p>
-            </motion.div>
-          ))}
-        </div>
-
         {/* Comparison table */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -87,10 +62,10 @@ export default function Comparison() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-200">
-                <th className="text-left py-4 px-6 bg-slate-50 text-slate-600 font-medium w-2/5">What matters</th>
-                <th className="text-center py-4 px-5 bg-slate-50 text-slate-600 font-semibold">Solo</th>
-                <th className="text-center py-4 px-5 bg-slate-50 text-slate-600 font-semibold">AI Auto-Apply</th>
-                <th className="text-center py-4 px-5 bg-slate-50 text-slate-600 font-semibold">Staffing Firms</th>
+                <th className="text-left py-4 px-6 bg-slate-100 text-slate-800 font-semibold w-2/5">What matters</th>
+                <th className="text-center py-4 px-5 bg-slate-100 text-slate-800 font-bold">Solo</th>
+                <th className="text-center py-4 px-5 bg-slate-100 text-slate-800 font-bold">AI Auto-Apply</th>
+                <th className="text-center py-4 px-5 bg-slate-100 text-slate-800 font-bold">Staffing Firms</th>
                 <th className="text-center py-4 px-5 bg-blue-accent text-white font-bold">
                   JobBlitz ⚡
                 </th>
@@ -116,6 +91,31 @@ export default function Comparison() {
             </tbody>
           </table>
         </motion.div>
+
+        {/* Verdict cards — below the table */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+          {VERDICTS.map((v, i) => (
+            <motion.div
+              key={v.label}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "0px 0px -60px 0px" }}
+              transition={{ delay: i * 0.08, duration: 0.4, ease: 'easeOut' }}
+              className={`rounded-2xl p-5 text-center border transition-all duration-200 cursor-default ${
+                v.dark
+                  ? 'bg-blue-accent border-blue-accent text-white shadow-xl shadow-blue-200 hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-blue-200'
+                  : 'bg-slate-50 border-slate-200 hover:-translate-y-1 hover:shadow-md hover:border-slate-300'
+              }`}
+            >
+              <p className="text-2xl mb-1.5">{v.emoji}</p>
+              <p className={`text-xs font-semibold uppercase tracking-widest mb-1 ${v.dark ? 'text-blue-200' : 'text-slate-500'}`}>
+                {v.label}
+              </p>
+              <p className={`font-bold text-sm ${v.dark ? 'text-white' : 'text-navy'}`}>{v.verdict}</p>
+              <p className={`text-xs mt-1 ${v.dark ? 'text-blue-100' : 'text-slate-500'}`}>{v.sub}</p>
+            </motion.div>
+          ))}
+        </div>
 
         {/* CTA */}
         <div className="text-center">

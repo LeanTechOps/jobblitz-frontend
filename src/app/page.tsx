@@ -6,8 +6,8 @@ import Features from '@/components/landing/Features'
 import FeaturesShowcase from '@/components/landing/FeaturesShowcase'
 import Stats from '@/components/landing/Stats'
 import Testimonials from '@/components/landing/Testimonials'
+import SocialProof from '@/components/landing/SocialProof'
 import Comparison from '@/components/landing/Comparison'
-import PricingSection from '@/components/landing/PricingSection'
 import FAQ from '@/components/landing/FAQ'
 import Link from 'next/link'
 
@@ -23,7 +23,7 @@ export default function LandingPage() {
         <Stats />
         <Comparison />
         <Testimonials />
-        <PricingSection />
+        <SocialProof />
         <FAQ />
 
         {/* CTA Banner */}
