@@ -20,11 +20,31 @@ const STATS = [
   { value: '3×', label: 'More interviews' },
 ]
 
+const PLAN_CONTEXT: Record<string, { badge: string; heading: string; sub: string }> = {
+  free: {
+    badge: 'Free Plan',
+    heading: 'Start your free plan',
+    sub: 'No credit card required. Start automating your job search in seconds.',
+  },
+  pro: {
+    badge: 'Pro Plan',
+    heading: 'Start your Pro plan',
+    sub: 'Sign in to complete your Pro plan setup and get 50 applications/day.',
+  },
+  business: {
+    badge: 'Business Plan',
+    heading: 'Start your Business plan',
+    sub: 'Sign in to complete your Business plan setup and unlock full power.',
+  },
+}
+
 function LoginPageInner() {
   const { isAuthenticated, loading } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
   const authError = searchParams.get('error')
+  const planParam = searchParams.get('plan')?.toLowerCase() ?? null
+  const planCtx = planParam ? PLAN_CONTEXT[planParam] : null
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
@@ -129,11 +149,16 @@ function LoginPageInner() {
         <div className="w-full max-w-sm">
           {/* Heading */}
           <div className="mb-8 text-center">
+            {planCtx && (
+              <span className="inline-block mb-3 text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full bg-blue-muted text-blue-accent border border-blue-accent/20">
+                {planCtx.badge}
+              </span>
+            )}
             <h1 className="text-2xl font-extrabold text-navy mb-2">
-              Welcome to JobBlitz
+              {planCtx ? planCtx.heading : 'Welcome to JobBlitz'}
             </h1>
             <p className="text-slate-600 text-base">
-              Sign in to start automating your job search — it&apos;s free.
+              {planCtx ? planCtx.sub : 'Sign in to start automating your job search — it\'s free.'}
             </p>
           </div>
 

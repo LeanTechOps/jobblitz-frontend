@@ -109,9 +109,6 @@ function AuthCallbackInner() {
         </ul>
       </div>
 
-      <p className="mt-8 text-xs text-slate-400">
-        Secured with httpOnly JWT · No password needed
-      </p>
     </div>
   )
 }

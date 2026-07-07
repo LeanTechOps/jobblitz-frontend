@@ -14,9 +14,8 @@ import {
 
 const PLAN_BADGE_COLOR: Record<string, string> = {
   FREE: 'bg-slate-100 text-slate-600',
-  STARTER: 'bg-slate-100 text-slate-600',
   PRO: 'bg-blue-muted text-blue-accent',
-  BLITZ: 'bg-navy text-white',
+  BUSINESS: 'bg-navy text-white',
 }
 
 const QUICK_ACTIONS = [
@@ -59,6 +58,9 @@ export default function DashboardPage() {
     }
   }, [isAuthenticated, loading, router])
 
+  // Wait for both user AND subscription to be resolved before rendering plan-gated UI.
+  // subscription===null means "fetched, no record"; undefined would mean "not yet fetched",
+  // but since AuthContext always sets it in the same batch as user, waiting on loading suffices.
   if (loading || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-section-alt">
@@ -68,8 +70,12 @@ export default function DashboardPage() {
   }
 
   const firstName = user.firstName ?? user.email.split('@')[0]
+  // Only resolve plan after subscription is confirmed loaded (not null from missing data)
   const plan = subscription?.plan ?? 'FREE'
-  const isFreePlan = plan === 'FREE' || plan === 'STARTER'
+  // Only treat as free if subscription is confirmed loaded AND plan is FREE
+  const isFreePlan = subscription !== null
+    ? plan === 'FREE'
+    : false  // hide upgrade banner while subscription is still loading/null
 
   return (
     <div className="min-h-screen bg-section-alt flex flex-col">
@@ -85,11 +91,15 @@ export default function DashboardPage() {
 
           <div className="flex items-center gap-4">
             {/* Plan badge */}
-            <span
-              className={`text-xs font-bold px-2.5 py-1 rounded-full cursor-default select-none ${PLAN_BADGE_COLOR[plan] ?? PLAN_BADGE_COLOR.FREE}`}
-            >
-              {plan}
-            </span>
+            {subscription !== null ? (
+              <span
+                className={`text-xs font-bold px-2.5 py-1 rounded-full cursor-default select-none ${PLAN_BADGE_COLOR[plan] ?? PLAN_BADGE_COLOR.FREE}`}
+              >
+                {plan}
+              </span>
+            ) : (
+              <span className="inline-block w-14 h-5 rounded-full bg-slate-100 animate-pulse" />
+            )}
 
             {/* Avatar */}
             <div className="w-8 h-8 rounded-full bg-navy text-white text-xs font-bold flex items-center justify-center hover:bg-slate-700 transition-colors duration-150 cursor-default select-none">
@@ -109,22 +119,16 @@ export default function DashboardPage() {
       {/* Content */}
       <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-10">
         {/* Welcome */}
-        <div className="flex items-center justify-between mb-8 gap-4">
-          <div>
-            <p className="text-xs font-semibold text-blue-accent uppercase tracking-widest mb-1">
-              Dashboard
-            </p>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-navy">
-              Welcome back, {firstName} 👋
-            </h1>
-            <p className="text-slate-500 text-sm mt-1">
-              Here&apos;s your job search overview for today.
-            </p>
-          </div>
-          {/* Avatar with ring */}
-          <div className="flex-shrink-0 hidden sm:flex w-12 h-12 rounded-full bg-navy text-white text-base font-bold items-center justify-center ring-2 ring-blue-accent/30 ring-offset-2 select-none cursor-default">
-            {(user.firstName?.[0] ?? user.email[0]).toUpperCase()}
-          </div>
+        <div className="mb-8">
+          <p className="text-xs font-semibold text-blue-accent uppercase tracking-widest mb-1">
+            Dashboard
+          </p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-navy">
+            Welcome back, {firstName} 👋
+          </h1>
+          <p className="text-slate-500 text-sm mt-1">
+            Here&apos;s your job search overview for today.
+          </p>
         </div>
 
         {/* Upgrade banner — only for free plan */}

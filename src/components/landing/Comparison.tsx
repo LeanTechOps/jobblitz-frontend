@@ -73,7 +73,7 @@ function Cell({ value, isJobBlitz }: { value: CellVal; isJobBlitz?: boolean }) {
       />
     )
   if (value === false)
-    return <XMarkIcon className="w-4 h-4 mx-auto text-red-400/70" />
+    return <XMarkIcon className="w-5 h-5 mx-auto text-red-500" />
   return <MinusIcon className="w-4 h-4 mx-auto text-amber-400" />
 }
 
@@ -197,7 +197,7 @@ export default function Comparison() {
         {/* CTA nudge */}
         <div className="text-center mt-12">
           <Link
-            href="/login"
+            href="/login?plan=free"
             className="group inline-flex items-center gap-2 bg-blue-accent hover:bg-blue-500 active:scale-[0.98] text-white font-semibold px-8 py-3.5 rounded-lg transition-all duration-150 text-sm shadow-lg shadow-blue-100 hover:shadow-xl hover:shadow-blue-100 cursor-pointer select-none"
           >
             Start for Free — No Credit Card Required

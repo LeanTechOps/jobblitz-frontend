@@ -80,7 +80,7 @@ export default function Hero() {
           className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-14"
         >
           <Link
-            href="/login"
+            href="/login?plan=free"
             className="group inline-flex items-center gap-2 bg-blue-accent hover:bg-blue-500 active:scale-95 text-white font-semibold px-6 py-3.5 rounded-lg transition-all duration-150 shadow-lg shadow-blue-100 hover:shadow-xl hover:shadow-blue-100 cursor-pointer select-none"
           >
             Get Started Free

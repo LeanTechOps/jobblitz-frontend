@@ -17,12 +17,12 @@ export const PLANS = [
     id: 'free',
     name: 'Free',
     monthlyPrice: 0,
-    annualPrice: 0,
+    annualPrice: null as number | null,
     description: 'Get started with no commitment. No credit card required.',
     badge: null,
     highlighted: false,
     cta: 'Get Started Free',
-    ctaHref: '/login',
+    ctaHref: '/login?plan=free',
     // Only list what's included — no X marks (drivetube style)
     features: [
       '5 auto-applications per day',
@@ -36,12 +36,12 @@ export const PLANS = [
     id: 'pro',
     name: 'Pro',
     monthlyPrice: 29,
-    annualPrice: 19,
+    annualPrice: null as number | null,
     description: 'For active job seekers who want measurable results.',
     badge: 'Most Popular',
     highlighted: true,
     cta: 'Start Pro',
-    ctaHref: '/login',
+    ctaHref: '/login?plan=pro',
     features: [
       'Everything in Free',
       '50 auto-applications per day',
@@ -57,12 +57,12 @@ export const PLANS = [
     id: 'business',
     name: 'Business',
     monthlyPrice: 79,
-    annualPrice: 55,
+    annualPrice: null as number | null,
     description: 'For serious job seekers who want maximum firepower.',
     badge: null,
     highlighted: false,
     cta: 'Start Business',
-    ctaHref: '/login',
+    ctaHref: '/login?plan=business',
     features: [
       'Everything in Pro',
       '200 auto-applications per day',
@@ -111,8 +111,8 @@ export default function PricingSection({
   showComparisonTable = true,
 }: PricingSectionProps) {
   const [annual, setAnnual] = useState(false)
-  // Live prices fetched from backend; keyed by plan id
   const [livePrices, setLivePrices] = useState<Record<string, { monthly?: number; annual?: number }>>({})
+  const [pricesFetched, setPricesFetched] = useState(false)
 
   useEffect(() => {
     const fetchPrices = async () => {
@@ -130,10 +130,15 @@ export default function PricingSection({
         setLivePrices(data)
       } catch {
         // silently fall back to static plan values
+      } finally {
+        setPricesFetched(true)
       }
     }
     fetchPrices()
   }, [])
+
+  // Only show annual toggle once API responds and confirms annual prices exist
+  const hasAnyAnnual = pricesFetched && Object.values(livePrices).some((lp) => lp.annual != null)
 
   return (
     <section id="pricing" className="bg-white py-20 sm:py-28">
@@ -153,30 +158,37 @@ export default function PricingSection({
           </div>
         )}
 
-        {/* Billing toggle */}
-        <div className="flex items-center justify-center gap-4 mb-12">
-          <span className={`text-sm font-medium ${!annual ? 'text-navy' : 'text-slate-400'}`}>Monthly</span>
-          <button
-            onClick={() => setAnnual(!annual)}
-            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-blue-accent focus-visible:ring-offset-2 cursor-pointer ${annual ? 'bg-blue-accent' : 'bg-slate-200'}`}
-          >
-            <span className={`inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-200 ${annual ? 'translate-x-6' : 'translate-x-1'}`} />
-          </button>
-          <span className={`text-sm font-medium ${annual ? 'text-navy' : 'text-slate-400'}`}>Annually</span>
-          {annual && (
-            <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-emerald-200">
-              Save up to 30%
-            </span>
-          )}
-        </div>
+        {/* Billing toggle — only rendered if Stripe has at least one annual price */}
+        {hasAnyAnnual && (
+          <div className="flex items-center justify-center gap-4 mb-12">
+            <span className={`text-sm font-medium ${!annual ? 'text-navy' : 'text-slate-400'}`}>Monthly</span>
+            <button
+              onClick={() => setAnnual(!annual)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-blue-accent focus-visible:ring-offset-2 cursor-pointer ${annual ? 'bg-blue-accent' : 'bg-slate-200'}`}
+            >
+              <span className={`inline-block h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-200 ${annual ? 'translate-x-6' : 'translate-x-1'}`} />
+            </button>
+            <span className={`text-sm font-medium ${annual ? 'text-navy' : 'text-slate-400'}`}>Annually</span>
+            {annual && (
+              <span className="bg-emerald-50 text-emerald-700 text-xs font-semibold px-2.5 py-1 rounded-full border border-emerald-200">
+                Save up to 30%
+              </span>
+            )}
+          </div>
+        )}
 
-        {/* Plan cards */}
+        {/* Plan cards — when annual is on, only show plans that have an annual price (Free always shown) */}
         <div className="grid md:grid-cols-3 gap-6 items-start mb-16">
-          {PLANS.map((plan, i) => {
+          {PLANS.filter((plan) => {
+            if (!annual) return true
+            if (plan.id === 'free') return true
+            return livePrices[plan.id]?.annual != null
+          }).map((plan, i) => {
             const lp = livePrices[plan.id]
             const monthlyPrice = lp?.monthly ?? plan.monthlyPrice
-            const annualPrice = lp?.annual ?? plan.annualPrice
-            const price = annual ? annualPrice : monthlyPrice
+            const annualPrice = lp?.annual ?? null
+            const hasAnnual = annualPrice != null
+            const price = (annual && hasAnnual) ? annualPrice : monthlyPrice
 
             return (
               <motion.div
@@ -219,9 +231,9 @@ export default function PricingSection({
                         </span>
                       )}
                     </div>
-                    {annual && monthlyPrice > 0 && (
+                    {annual && hasAnnual && monthlyPrice > 0 && (
                       <p className={`text-xs mt-1 ${plan.highlighted ? 'text-blue-300' : 'text-slate-400'}`}>
-                        Billed ${Math.round(annualPrice * 12)}/yr · Save ${Math.round((monthlyPrice - annualPrice) * 12)}/yr
+                        Billed ${Math.round(annualPrice! * 12)}/yr · Save ${Math.round((monthlyPrice - annualPrice!) * 12)}/yr
                       </p>
                     )}
                     {plan.monthlyPrice === 0 && (
