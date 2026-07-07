@@ -1,0 +1,7 @@
+services:
+  app:
+    image: ${IMAGE_NAME}
+    env_file: .env.local
+    ports:
+      - "4000:4000"
+    restart: always
