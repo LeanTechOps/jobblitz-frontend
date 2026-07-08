@@ -14,6 +14,7 @@ import ProfessionalLinksCard from '@/components/profile/ProfessionalLinksCard'
 import ResumesSection from '@/components/profile/ResumesSection'
 import JobPreferencesCard from '@/components/profile/JobPreferencesCard'
 import SkillsCard from '@/components/profile/SkillsCard'
+import VisaCard from '@/components/profile/VisaCard'
 import { SectionLabel } from '@/components/profile/shared'
 import type { ProfileData } from '@/components/profile/types'
 
@@ -40,6 +41,7 @@ export default function ProfilePage() {
     headline: '', location: '', linkedinUrl: '', githubUrl: '', portfolioUrl: '',
   })
   const [skills, setSkills] = useState<string[]>([])
+  const [visaType, setVisaType] = useState<string | null>(null)
 
   useEffect(() => {
     if (profile) {
@@ -51,6 +53,7 @@ export default function ProfilePage() {
         portfolioUrl: profile.portfolioUrl ?? '',
       })
       setSkills(profile.skills ?? [])
+      setVisaType(profile.visaType ?? null)
     }
   }, [profile])
 
@@ -67,7 +70,20 @@ export default function ProfilePage() {
   const onChange = (k: keyof ProfileData) => (v: string) => setForm((f) => ({ ...f, [k]: v }))
 
   const handleSave = async () => {
-    const payload = { ...Object.fromEntries(Object.entries(form).filter(([, v]) => v !== '')), skills }
+    // URL fields: send null explicitly when cleared so backend actually clears them.
+    // Other string fields: drop empties (backend ignores missing optional fields).
+    const urlFields = ['linkedinUrl', 'githubUrl', 'portfolioUrl'] as const
+    const isBarePrefixOnly = (url: string) =>
+      /^https?:\/\/(www\.)?(linkedin\.com\/in|github\.com)\/?$/i.test(url)
+
+    const nonUrlEntries = Object.entries(form)
+      .filter(([k, v]) => !urlFields.includes(k as typeof urlFields[number]) && v !== '')
+    const urlEntries = urlFields.map((k) => {
+      const v = form[k]
+      const cleared = !v || isBarePrefixOnly(v)
+      return [k, cleared ? null : v]
+    })
+    const payload = { ...Object.fromEntries([...nonUrlEntries, ...urlEntries]), skills, visaType: visaType ?? null }
     try {
       await updateProfile.mutateAsync(payload as Partial<ProfileData>)
       toast.success('Profile saved!')
@@ -166,6 +182,11 @@ export default function ProfilePage() {
         <div>
           <SectionLabel>Skills</SectionLabel>
           <SkillsCard skills={skills} onChange={setSkills} />
+        </div>
+
+        <div>
+          <SectionLabel>Work Authorization</SectionLabel>
+          <VisaCard value={visaType} onChange={setVisaType} />
         </div>
 
         <ResumesSection

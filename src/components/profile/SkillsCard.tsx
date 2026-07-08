@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { WrenchScrewdriverIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { Card } from './shared'
+import { normaliseSkill } from '@/lib/utils'
 
 interface Props {
   skills: string[]
@@ -13,7 +14,7 @@ export default function SkillsCard({ skills, onChange }: Props) {
   const [input, setInput] = useState('')
 
   const add = () => {
-    const s = input.trim()
+    const s = normaliseSkill(input)
     if (s && !skills.includes(s)) onChange([...skills, s])
     setInput('')
   }

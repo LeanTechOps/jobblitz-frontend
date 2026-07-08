@@ -28,6 +28,8 @@ export interface Resume {
   contentType: string
   isDefault: boolean
   createdAt: string
+  thumbnailKey: string | null
+  thumbnailUrl: string | null
   downloadUrl: string | null
 }
 
@@ -66,7 +68,7 @@ export function useResumes() {
     queryKey: profileKeys.resumes,
     queryFn: () =>
       api.get<Resume[]>('/profile/resumes').then((list) =>
-        list.map((r) => ({ ...r, downloadUrl: null })),
+        list.map((r) => ({ ...r, thumbnailKey: r.thumbnailKey ?? null, thumbnailUrl: r.thumbnailUrl ?? null, downloadUrl: null })),
       ),
   })
 }

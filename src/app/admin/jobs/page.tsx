@@ -4,8 +4,9 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useJobs, useDeleteJob } from '@/hooks/useJobs'
 import { useDebounce } from '@/hooks/useDebounce'
-import { PlusIcon, MagnifyingGlassIcon, PencilSquareIcon, TrashIcon, BriefcaseIcon } from '@heroicons/react/24/outline'
+import { PlusIcon, MagnifyingGlassIcon, PencilSquareIcon, TrashIcon, BriefcaseIcon, EyeIcon } from '@heroicons/react/24/outline'
 import { toast } from 'react-toastify'
+import DeleteConfirmModal from '@/components/ui/DeleteConfirmModal'
 
 const STATUS_PILL: Record<string, string> = {
   ACTIVE: 'bg-blue-accent text-navy font-bold',
@@ -35,6 +36,7 @@ export default function AdminJobsPage() {
   const [page, setPage] = useState(1)
   const [searchInput, setSearchInput] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null)
 
   // Debounce search — only fires query 400ms after user stops typing
   const search = useDebounce(searchInput, 400)
@@ -46,11 +48,12 @@ export default function AdminJobsPage() {
   const total = data?.total ?? 0
   const totalPages = data?.totalPages ?? 1
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Delete this job? This cannot be undone.')) return
+  const handleDelete = async () => {
+    if (!deleteTarget) return
     try {
-      await deleteJob.mutateAsync(id)
+      await deleteJob.mutateAsync(deleteTarget.id)
       toast.success('Job deleted')
+      setDeleteTarget(null)
     } catch {
       toast.error('Failed to delete job')
     }
@@ -127,7 +130,7 @@ export default function AdminJobsPage() {
                 <tr key={job.id} className="hover:bg-section-alt transition-colors duration-100">
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3">
-                      <CompanyLogo domain={job.companyDomain} name={job.company} />
+                      <CompanyLogo name={job.company} logoUrl={job.companyLogoUrl} />
                       <div>
                         <p className="font-semibold text-navy">{job.title}</p>
                         <p className="text-xs text-slate-600 mt-0.5">
@@ -159,15 +162,24 @@ export default function AdminJobsPage() {
                   <td className="px-5 py-4 text-right">
                     <div className="flex items-center justify-end gap-1">
                       <Link
+                        href={`/admin/jobs/${job.id}`}
+                        className="p-2 rounded-lg hover:bg-blue-muted text-slate-400 hover:text-navy transition-colors cursor-pointer"
+                        title="View"
+                      >
+                        <EyeIcon className="w-4 h-4" />
+                      </Link>
+                      <Link
                         href={`/admin/jobs/${job.id}/edit`}
-                        className="p-2 rounded-lg hover:bg-blue-muted text-slate-400 hover:text-navy transition-colors"
+                        className="p-2 rounded-lg hover:bg-blue-muted text-slate-400 hover:text-navy transition-colors cursor-pointer"
+                        title="Edit"
                       >
                         <PencilSquareIcon className="w-4 h-4" />
                       </Link>
                       <button
-                        onClick={() => handleDelete(job.id)}
+                        onClick={() => setDeleteTarget({ id: job.id, title: job.title })}
                         disabled={deleteJob.isPending}
-                        className="p-2 rounded-lg hover:bg-peach-muted text-slate-400 hover:text-peach transition-colors disabled:opacity-50"
+                        className="p-2 rounded-lg hover:bg-peach-muted text-slate-400 hover:text-peach transition-colors disabled:opacity-50 cursor-pointer"
+                        title="Delete"
                       >
                         <TrashIcon className="w-4 h-4" />
                       </button>
@@ -186,35 +198,44 @@ export default function AdminJobsPage() {
           <p className="text-sm text-slate-500">Page {page} of {totalPages}</p>
           <div className="flex gap-2">
             <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)}
-              className="px-4 py-2 text-sm font-medium border border-slate-200 rounded-xl bg-white disabled:opacity-40 hover:border-navy/30 hover:bg-section-alt transition-colors">
+              className="px-4 py-2 text-sm font-medium border border-slate-200 rounded-xl bg-white disabled:opacity-40 hover:border-navy/30 hover:bg-section-alt transition-colors cursor-pointer">
               Previous
             </button>
             <button disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}
-              className="px-4 py-2 text-sm font-medium border border-slate-200 rounded-xl bg-white disabled:opacity-40 hover:border-navy/30 hover:bg-section-alt transition-colors">
+              className="px-4 py-2 text-sm font-medium border border-slate-200 rounded-xl bg-white disabled:opacity-40 hover:border-navy/30 hover:bg-section-alt transition-colors cursor-pointer">
               Next
             </button>
           </div>
         </div>
       )}
+
+      {deleteTarget && (
+        <DeleteConfirmModal
+          title={`Delete "${deleteTarget.title}"?`}
+          description="This job listing and all its data will be permanently removed."
+          confirmLabel="Delete Job"
+          loading={deleteJob.isPending}
+          onConfirm={handleDelete}
+          onClose={() => setDeleteTarget(null)}
+        />
+      )}
     </div>
   )
 }
 
-function CompanyLogo({ domain, name }: { domain: string | null; name: string }) {
-  const [failed, setFailed] = useState(false)
-  if (!domain || failed) {
+function CompanyLogo({ name, logoUrl }: { name: string; logoUrl: string | null }) {
+  if (logoUrl) {
     return (
-      <div className="w-9 h-9 rounded-lg bg-blue-muted border border-blue-accent/20 flex items-center justify-center text-sm font-bold text-navy shrink-0">
-        {name[0]?.toUpperCase()}
-      </div>
+      <img
+        src={logoUrl}
+        alt={name}
+        className="w-9 h-9 rounded-lg object-contain border border-slate-100 bg-white p-1 shrink-0"
+      />
     )
   }
   return (
-    <img
-      src={`https://logo.clearbit.com/${domain}`}
-      alt={name}
-      className="w-9 h-9 rounded-lg object-contain border border-slate-100 bg-white p-0.5 shrink-0"
-      onError={() => setFailed(true)}
-    />
+    <div className="w-9 h-9 rounded-lg bg-blue-muted border border-blue-accent/20 flex items-center justify-center text-sm font-bold text-navy shrink-0">
+      {name[0]?.toUpperCase()}
+    </div>
   )
 }
