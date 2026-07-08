@@ -20,7 +20,7 @@ const STEPS = [
 function AuthCallbackInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { refetch, setIsAuthenticated } = useAuth()
+  const { refetch, setIsAuthenticated, user } = useAuth()
 
   const error = searchParams.get('error')
   const handled = useRef(false)
@@ -31,9 +31,7 @@ function AuthCallbackInner() {
 
     // ── Error path ──────────────────────────────────────────────────────────
     if (error) {
-      const msg =
-        ERROR_MESSAGES[error] ??
-        decodeURIComponent(error)
+      const msg = ERROR_MESSAGES[error] ?? decodeURIComponent(error)
       router.replace(`/login?error=${encodeURIComponent(msg)}`)
       return
     }
@@ -43,7 +41,6 @@ function AuthCallbackInner() {
       try {
         await refetch()
         setIsAuthenticated(true)
-        router.replace('/dashboard')
       } catch {
         router.replace(
           `/login?error=${encodeURIComponent('Authentication failed. Please try again.')}`,
@@ -53,6 +50,16 @@ function AuthCallbackInner() {
 
     run()
   }, [error, refetch, setIsAuthenticated, router])
+
+  // Once user is loaded, redirect based on role
+  useEffect(() => {
+    if (!user) return
+    if (user.role === 'ADMIN') {
+      router.replace('/admin/dashboard')
+    } else {
+      router.replace('/dashboard')
+    }
+  }, [user, router])
 
   // If there's an error param, show a brief error state while redirecting
   if (error) {
