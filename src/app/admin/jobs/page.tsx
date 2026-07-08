@@ -1,36 +1,11 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
-import { api } from '@/lib/api'
+import { useJobs, useDeleteJob } from '@/hooks/useJobs'
+import { useDebounce } from '@/hooks/useDebounce'
 import { PlusIcon, MagnifyingGlassIcon, PencilSquareIcon, TrashIcon, BriefcaseIcon } from '@heroicons/react/24/outline'
 import { toast } from 'react-toastify'
-
-interface Job {
-  id: string
-  title: string
-  company: string
-  companyDomain: string | null
-  location: string | null
-  workMode: string
-  type: string
-  experienceLevel: string
-  status: string
-  skills: string[]
-  visaSponsorship: boolean
-  salaryMin: number | null
-  salaryMax: number | null
-  salaryCurrency: string
-  salaryNegotiable: boolean
-  createdAt: string
-}
-
-interface JobsResponse {
-  data: Job[]
-  total: number
-  page: number
-  totalPages: number
-}
 
 const STATUS_PILL: Record<string, string> = {
   ACTIVE: 'bg-blue-muted text-navy font-semibold',
@@ -57,43 +32,27 @@ const inputCls =
   'border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-accent/40 focus:border-navy transition-colors'
 
 export default function AdminJobsPage() {
-  const [jobs, setJobs] = useState<Job[]>([])
-  const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  const [search, setSearch] = useState('')
+  const [searchInput, setSearchInput] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [deletingId, setDeletingId] = useState<string | null>(null)
 
-  const fetchJobs = useCallback(async () => {
-    setLoading(true)
-    try {
-      const params = new URLSearchParams({ page: String(page), limit: '15' })
-      if (search) params.set('search', search)
-      if (statusFilter) params.set('status', statusFilter)
-      const res = await api.get<JobsResponse>(`/jobs?${params}`)
-      setJobs(res.data)
-      setTotal(res.total)
-      setTotalPages(res.totalPages)
-    } finally {
-      setLoading(false)
-    }
-  }, [page, search, statusFilter])
+  // Debounce search — only fires query 400ms after user stops typing
+  const search = useDebounce(searchInput, 400)
 
-  useEffect(() => { fetchJobs() }, [fetchJobs])
+  const { data, isLoading } = useJobs({ page, limit: 15, search, status: statusFilter })
+  const deleteJob = useDeleteJob()
+
+  const jobs = data?.data ?? []
+  const total = data?.total ?? 0
+  const totalPages = data?.totalPages ?? 1
 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this job? This cannot be undone.')) return
-    setDeletingId(id)
     try {
-      await api.delete(`/jobs/${id}`)
+      await deleteJob.mutateAsync(id)
       toast.success('Job deleted')
-      fetchJobs()
     } catch {
       toast.error('Failed to delete job')
-    } finally {
-      setDeletingId(null)
     }
   }
 
@@ -122,8 +81,8 @@ export default function AdminJobsPage() {
           <input
             type="text"
             placeholder="Search title, company…"
-            value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+            value={searchInput}
+            onChange={(e) => { setSearchInput(e.target.value); setPage(1) }}
             className={`${inputCls} w-full pl-9`}
           />
         </div>
@@ -141,7 +100,7 @@ export default function AdminJobsPage() {
 
       {/* Table */}
       <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden">
-        {loading ? (
+        {isLoading ? (
           <div className="flex items-center justify-center h-48">
             <div className="w-7 h-7 rounded-full border-2 border-navy border-t-blue-accent animate-spin" />
           </div>
@@ -186,9 +145,7 @@ export default function AdminJobsPage() {
                   <td className="px-4 py-4 hidden lg:table-cell">
                     <div className="flex flex-wrap gap-1 max-w-xs">
                       {job.skills.slice(0, 3).map((s) => (
-                        <span key={s} className="text-xs bg-blue-muted text-navy px-2 py-0.5 rounded-full font-medium">
-                          {s}
-                        </span>
+                        <span key={s} className="text-xs bg-blue-muted text-navy px-2 py-0.5 rounded-full font-medium">{s}</span>
                       ))}
                       {job.skills.length > 3 && (
                         <span className="text-xs text-slate-400">+{job.skills.length - 3}</span>
@@ -205,15 +162,13 @@ export default function AdminJobsPage() {
                       <Link
                         href={`/admin/jobs/${job.id}/edit`}
                         className="p-2 rounded-lg hover:bg-blue-muted text-slate-400 hover:text-navy transition-colors"
-                        title="Edit"
                       >
                         <PencilSquareIcon className="w-4 h-4" />
                       </Link>
                       <button
                         onClick={() => handleDelete(job.id)}
-                        disabled={deletingId === job.id}
+                        disabled={deleteJob.isPending}
                         className="p-2 rounded-lg hover:bg-peach-muted text-slate-400 hover:text-peach transition-colors disabled:opacity-50"
-                        title="Delete"
                       >
                         <TrashIcon className="w-4 h-4" />
                       </button>
@@ -231,18 +186,12 @@ export default function AdminJobsPage() {
         <div className="flex items-center justify-between mt-5">
           <p className="text-sm text-slate-500">Page {page} of {totalPages}</p>
           <div className="flex gap-2">
-            <button
-              disabled={page <= 1}
-              onClick={() => setPage((p) => p - 1)}
-              className="px-4 py-2 text-sm font-medium border border-slate-200 rounded-xl bg-white disabled:opacity-40 hover:border-navy/30 hover:bg-section-alt transition-colors"
-            >
+            <button disabled={page <= 1} onClick={() => setPage((p) => p - 1)}
+              className="px-4 py-2 text-sm font-medium border border-slate-200 rounded-xl bg-white disabled:opacity-40 hover:border-navy/30 hover:bg-section-alt transition-colors">
               Previous
             </button>
-            <button
-              disabled={page >= totalPages}
-              onClick={() => setPage((p) => p + 1)}
-              className="px-4 py-2 text-sm font-medium border border-slate-200 rounded-xl bg-white disabled:opacity-40 hover:border-navy/30 hover:bg-section-alt transition-colors"
-            >
+            <button disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}
+              className="px-4 py-2 text-sm font-medium border border-slate-200 rounded-xl bg-white disabled:opacity-40 hover:border-navy/30 hover:bg-section-alt transition-colors">
               Next
             </button>
           </div>

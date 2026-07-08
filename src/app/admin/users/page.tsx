@@ -1,33 +1,10 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
-import { api } from '@/lib/api'
+import { useAdminUsers } from '@/hooks/useAdmin'
+import { useDebounce } from '@/hooks/useDebounce'
 import { MagnifyingGlassIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
-
-interface UserRow {
-  id: string
-  email: string
-  firstName: string | null
-  lastName: string | null
-  avatar: string | null
-  role: string
-  createdAt: string
-  subscription: { plan: string; status: string } | null
-  profile: {
-    headline: string | null
-    skills: string[]
-    visaType: string | null
-    resumes: { id: string; isDefault: boolean }[]
-  } | null
-}
-
-interface UsersResponse {
-  data: UserRow[]
-  total: number
-  page: number
-  totalPages: number
-}
 
 const PLAN_PILL: Record<string, string> = {
   FREE: 'bg-slate-100 text-slate-500',
@@ -49,37 +26,23 @@ const inputCls =
   'border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-accent/40 focus:border-navy transition-colors'
 
 export default function AdminUsersPage() {
-  const [users, setUsers] = useState<UserRow[]>([])
-  const [total, setTotal] = useState(0)
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  const [search, setSearch] = useState('')
-  const [skillFilter, setSkillFilter] = useState('')
+  const [searchInput, setSearchInput] = useState('')
+  const [skillInput, setSkillInput] = useState('')
   const [visaFilter, setVisaFilter] = useState('')
   const [planFilter, setPlanFilter] = useState('')
-  const [loading, setLoading] = useState(true)
 
-  const fetchUsers = useCallback(async () => {
-    setLoading(true)
-    try {
-      const params = new URLSearchParams({ page: String(page), limit: '20' })
-      if (search) params.set('search', search)
-      if (skillFilter) params.set('skill', skillFilter)
-      if (visaFilter) params.set('visaType', visaFilter)
-      if (planFilter) params.set('plan', planFilter)
-      const res = await api.get<UsersResponse>(`/admin/users?${params}`)
-      setUsers(res.data)
-      setTotal(res.total)
-      setTotalPages(res.totalPages)
-    } finally {
-      setLoading(false)
-    }
-  }, [page, search, skillFilter, visaFilter, planFilter])
+  const search = useDebounce(searchInput, 400)
+  const skill = useDebounce(skillInput, 400)
 
-  useEffect(() => { fetchUsers() }, [fetchUsers])
+  const { data, isLoading } = useAdminUsers({ page, limit: 20, search, skill, visaType: visaFilter, plan: planFilter })
 
-  const hasFilters = search || skillFilter || visaFilter || planFilter
-  const clearFilters = () => { setSearch(''); setSkillFilter(''); setVisaFilter(''); setPlanFilter(''); setPage(1) }
+  const users = data?.data ?? []
+  const total = data?.total ?? 0
+  const totalPages = data?.totalPages ?? 1
+
+  const hasFilters = searchInput || skillInput || visaFilter || planFilter
+  const clearFilters = () => { setSearchInput(''); setSkillInput(''); setVisaFilter(''); setPlanFilter(''); setPage(1) }
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
@@ -99,8 +62,8 @@ export default function AdminUsersPage() {
             <input
               type="text"
               placeholder="Search name or email…"
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+              value={searchInput}
+              onChange={(e) => { setSearchInput(e.target.value); setPage(1) }}
               className={`${inputCls} w-full pl-9`}
             />
           </div>
@@ -109,8 +72,8 @@ export default function AdminUsersPage() {
           <input
             type="text"
             placeholder="Filter by skill"
-            value={skillFilter}
-            onChange={(e) => { setSkillFilter(e.target.value); setPage(1) }}
+            value={skillInput}
+            onChange={(e) => { setSkillInput(e.target.value); setPage(1) }}
             className={`${inputCls} min-w-44`}
           />
 
@@ -147,7 +110,7 @@ export default function AdminUsersPage() {
 
       {/* Table */}
       <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden">
-        {loading ? (
+        {isLoading ? (
           <div className="flex items-center justify-center h-48">
             <div className="w-7 h-7 rounded-full border-2 border-navy border-t-blue-accent animate-spin" />
           </div>

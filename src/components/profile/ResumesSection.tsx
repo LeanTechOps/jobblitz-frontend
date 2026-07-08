@@ -1,10 +1,8 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import axios from 'axios'
 import { CloudArrowUpIcon, DocumentTextIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 import { toast } from 'react-toastify'
-import { api } from '@/lib/api'
 import ResumeRow from './ResumeRow'
 import { SectionLabel } from './shared'
 import type { Resume } from './types'
@@ -19,14 +17,14 @@ const ALLOWED_TYPES: Record<string, boolean> = {
 interface Props {
   resumes: Resume[]
   loaded: boolean
+  uploading: boolean
   busyResumeId: string | null
-  onReload: () => Promise<void>
+  onUpload: (file: File, label?: string) => Promise<void>
   onSetDefault: (id: string) => Promise<void>
-  onDelete: (id: string) => void
+  onDelete: (id: string) => Promise<void>
 }
 
-export default function ResumesSection({ resumes, loaded, busyResumeId, onReload, onSetDefault, onDelete }: Props) {
-  const [uploading, setUploading] = useState(false)
+export default function ResumesSection({ resumes, loaded, uploading, busyResumeId, onUpload, onSetDefault, onDelete }: Props) {
   const [uploadLabel, setUploadLabel] = useState('')
   const [dragOver, setDragOver] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -40,37 +38,9 @@ export default function ResumesSection({ resumes, loaded, busyResumeId, onReload
       toast.error(`File too large (${(file.size / 1024 / 1024).toFixed(1)} MB). Max is ${MAX_RESUME_SIZE_MB} MB.`)
       return
     }
-
-    setUploading(true)
-    const toastId = toast.loading('Preparing upload…')
-    try {
-      const { resumeId, uploadUrl } = await api.post<{ resumeId: string; key: string; uploadUrl: string }>(
-        '/profile/resumes/initiate-upload',
-        { originalName: file.name, contentType: file.type, fileSize: file.size },
-      )
-      toast.update(toastId, { render: 'Uploading…', type: 'default', isLoading: true })
-      await axios.put(uploadUrl, file, { headers: { 'Content-Type': file.type } })
-      toast.update(toastId, { render: 'Saving…', type: 'default', isLoading: true })
-      await api.post('/profile/resumes/confirm-upload', {
-        resumeId,
-        originalName: file.name,
-        contentType: file.type,
-        ...(uploadLabel.trim() && { label: uploadLabel.trim() }),
-      })
-      toast.update(toastId, { render: 'Resume uploaded!', type: 'success', isLoading: false, autoClose: 4000 })
-      setUploadLabel('')
-      if (fileRef.current) fileRef.current.value = ''
-      await onReload()
-    } catch (err: unknown) {
-      toast.update(toastId, {
-        render: err instanceof Error ? err.message : 'Upload failed',
-        type: 'error',
-        isLoading: false,
-        autoClose: 5000,
-      })
-    } finally {
-      setUploading(false)
-    }
+    await onUpload(file, uploadLabel)
+    setUploadLabel('')
+    if (fileRef.current) fileRef.current.value = ''
   }
 
   return (

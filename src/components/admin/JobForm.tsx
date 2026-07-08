@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { api } from '@/lib/api'
+import { useCreateJob, useUpdateJob } from '@/hooks/useJobs'
 import { toast } from 'react-toastify'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 
@@ -64,7 +64,8 @@ export default function JobForm({ initialData, jobId }: JobFormProps) {
   const router = useRouter()
   const [form, setForm] = useState<JobFormData>({ ...DEFAULT, ...initialData })
   const [skillInput, setSkillInput] = useState('')
-  const [saving, setSaving] = useState(false)
+  const createJob = useCreateJob()
+  const updateJob = useUpdateJob(jobId ?? '')
 
   const set = (field: keyof JobFormData, value: unknown) =>
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -77,34 +78,33 @@ export default function JobForm({ initialData, jobId }: JobFormProps) {
 
   const removeSkill = (s: string) => set('skills', form.skills.filter((x) => x !== s))
 
+  const saving = createJob.isPending || updateJob.isPending
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSaving(true)
+    const payload = {
+      ...form,
+      salaryMin: (!form.salaryNegotiable && form.salaryMin) ? Number(form.salaryMin) : undefined,
+      salaryMax: (!form.salaryNegotiable && form.salaryMax) ? Number(form.salaryMax) : undefined,
+      closesAt: form.closesAt || undefined,
+      companyDomain: form.companyDomain || undefined,
+      location: form.location || undefined,
+      responsibilities: form.responsibilities || undefined,
+      requirements: form.requirements || undefined,
+      benefits: form.benefits || undefined,
+      applicationUrl: form.applicationUrl || undefined,
+    }
     try {
-      const payload = {
-        ...form,
-        salaryMin: (!form.salaryNegotiable && form.salaryMin) ? Number(form.salaryMin) : undefined,
-        salaryMax: (!form.salaryNegotiable && form.salaryMax) ? Number(form.salaryMax) : undefined,
-        closesAt: form.closesAt || undefined,
-        companyDomain: form.companyDomain || undefined,
-        location: form.location || undefined,
-        responsibilities: form.responsibilities || undefined,
-        requirements: form.requirements || undefined,
-        benefits: form.benefits || undefined,
-        applicationUrl: form.applicationUrl || undefined,
-      }
       if (jobId) {
-        await api.patch(`/jobs/${jobId}`, payload)
+        await updateJob.mutateAsync(payload)
         toast.success('Job updated')
       } else {
-        await api.post('/jobs', payload)
+        await createJob.mutateAsync(payload)
         toast.success('Job created')
       }
       router.push('/admin/jobs')
     } catch {
       toast.error('Failed to save job')
-    } finally {
-      setSaving(false)
     }
   }
 

@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from 'next/font/google'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { AuthProvider } from '@/context/AuthContext'
+import QueryProvider from '@/providers/QueryProvider'
 import './globals.css'
 
 const jakarta = Plus_Jakarta_Sans({
@@ -32,6 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={jakarta.variable}>
       <body className="min-h-screen flex flex-col antialiased">
+        <QueryProvider>
         <AuthProvider>
           {children}
           <ToastContainer
@@ -46,6 +48,7 @@ export default function RootLayout({
             theme="light"
           />
         </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   )

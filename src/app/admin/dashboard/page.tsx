@@ -1,29 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { api } from '@/lib/api'
+import { useAdminStats } from '@/hooks/useAdmin'
 import {
   UsersIcon,
   BriefcaseIcon,
   SparklesIcon,
   ArrowRightIcon,
 } from '@heroicons/react/24/outline'
-
-interface DashboardStats {
-  totalUsers: number
-  totalJobs: number
-  plans: Record<string, number>
-  recentUsers: {
-    id: string
-    email: string
-    firstName: string | null
-    lastName: string | null
-    avatar: string | null
-    createdAt: string
-    subscription: { plan: string } | null
-  }[]
-}
 
 const PLAN_PILL: Record<string, string> = {
   FREE: 'bg-slate-100 text-slate-500',
@@ -33,12 +17,7 @@ const PLAN_PILL: Record<string, string> = {
 }
 
 export default function AdminDashboardPage() {
-  const [stats, setStats] = useState<DashboardStats | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    api.get<DashboardStats>('/admin/dashboard').then(setStats).finally(() => setLoading(false))
-  }, [])
+  const { data: stats, isLoading: loading } = useAdminStats()
 
   if (loading) {
     return (

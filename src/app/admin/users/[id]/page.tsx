@@ -1,9 +1,8 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { api } from '@/lib/api'
+import { useAdminUser } from '@/hooks/useAdmin'
 import {
   ChevronLeftIcon,
   DocumentTextIcon,
@@ -14,44 +13,6 @@ import {
   StarIcon,
 } from '@heroicons/react/24/outline'
 
-interface AdminUserProfile {
-  id: string
-  email: string
-  firstName: string | null
-  lastName: string | null
-  avatar: string | null
-  role: string
-  createdAt: string
-  subscription: {
-    plan: string
-    status: string
-    currentPeriodEnd: string | null
-    billingCycle: string | null
-  } | null
-  profile: {
-    headline: string | null
-    bio: string | null
-    location: string | null
-    phoneNumber: string | null
-    linkedinUrl: string | null
-    githubUrl: string | null
-    portfolioUrl: string | null
-    address: string | null
-    city: string | null
-    state: string | null
-    country: string | null
-    zipCode: string | null
-    visaType: string | null
-    skills: string[]
-    resumes: {
-      id: string
-      originalName: string
-      label: string | null
-      isDefault: boolean
-      createdAt: string
-    }[]
-  } | null
-}
 
 const PLAN_PILL: Record<string, string> = {
   FREE: 'bg-slate-100 text-slate-500',
@@ -77,14 +38,9 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 
 export default function AdminUserProfilePage() {
   const { id } = useParams<{ id: string }>()
-  const [user, setUser] = useState<AdminUserProfile | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { data: user, isLoading } = useAdminUser(id)
 
-  useEffect(() => {
-    api.get<AdminUserProfile>(`/admin/users/${id}`).then(setUser).finally(() => setLoading(false))
-  }, [id])
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="w-7 h-7 rounded-full border-2 border-navy border-t-blue-accent animate-spin" />
