@@ -176,7 +176,7 @@ export default function PricingSection({ showHeader = true }: PricingSectionProp
               >
                 {plan.badge && (
                   <div className={`text-center text-xs font-bold py-2 tracking-wide ${
-                    plan.highlighted ? 'bg-peach text-white' : 'bg-slate-50 text-navy border-b border-slate-100'
+                    plan.highlighted ? 'bg-blue-accent text-navy' : 'bg-slate-50 text-navy border-b border-slate-100'
                   }`}>
                     {plan.badge}
                   </div>
@@ -219,10 +219,10 @@ export default function PricingSection({ showHeader = true }: PricingSectionProp
                     href={plan.ctaHref}
                     className={`w-full text-center font-bold py-3 rounded-lg mt-6 mb-8 transition-all duration-150 text-sm active:scale-[0.98] cursor-pointer select-none ${
                       plan.highlighted
-                        ? 'bg-peach text-white hover:bg-peach-hover hover:shadow-md'
+                        ? 'bg-blue-accent text-navy hover:bg-blue-accent-hover hover:shadow-md'
                         : plan.id === 'free'
                         ? 'bg-navy hover:bg-navy-dark text-white hover:shadow-md'
-                        : 'bg-peach hover:bg-peach-hover text-white hover:shadow-lg'
+                        : 'bg-blue-accent hover:bg-blue-accent-hover text-navy hover:shadow-lg'
                     }`}
                   >
                     {plan.cta}

@@ -2,28 +2,24 @@
 
 import { motion } from 'framer-motion'
 
-import { CheckIcon, XMarkIcon, MinusIcon } from '@heroicons/react/24/solid'
+import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid'
 import Link from 'next/link'
 
 const ROWS = [
-  { feature: 'Works on ALL ATS systems (Workday, iCIMS, Taleo…)', solo: 'partial', aiAutoApply: false, staffing: 'partial', jobblitz: true },
-  { feature: 'Fully personalized applications', solo: true, aiAutoApply: false, staffing: 'partial', jobblitz: true },
+  { feature: 'Works on ALL ATS systems (Workday, iCIMS, Taleo…)', solo: false, aiAutoApply: false, staffing: false, jobblitz: true },
+  { feature: 'Fully personalized applications', solo: true, aiAutoApply: false, staffing: false, jobblitz: true },
   { feature: 'Consistent & reliable every day', solo: false, aiAutoApply: true, staffing: false, jobblitz: true },
-  { feature: 'AI resume tailoring per role', solo: false, aiAutoApply: 'partial', staffing: false, jobblitz: true },
+  { feature: 'AI resume tailoring per role', solo: false, aiAutoApply: false, staffing: false, jobblitz: true },
   { feature: 'Recruiter email outreach', solo: false, aiAutoApply: false, staffing: false, jobblitz: true },
   { feature: 'Proof of every application', solo: false, aiAutoApply: false, staffing: false, jobblitz: true },
   { feature: 'Better use of your time', solo: false, aiAutoApply: true, staffing: false, jobblitz: true },
   { feature: 'Affordable pricing', solo: true, aiAutoApply: true, staffing: false, jobblitz: true },
 ]
 
-type CellVal = boolean | 'partial'
-
-function Cell({ value, isJobBlitz }: { value: CellVal; isJobBlitz?: boolean }) {
+function Cell({ value, isJobBlitz }: { value: boolean; isJobBlitz?: boolean }) {
   if (value === true)
     return <CheckIcon className={`w-5 h-5 mx-auto ${isJobBlitz ? 'text-navy' : 'text-emerald-500'}`} />
-  if (value === false)
-    return <XMarkIcon className="w-5 h-5 mx-auto text-red-500" />
-  return <MinusIcon className="w-4 h-4 mx-auto text-amber-400" />
+  return <XMarkIcon className="w-5 h-5 mx-auto text-red-500" />
 }
 
 const VERDICTS = [
@@ -80,11 +76,11 @@ export default function Comparison() {
                   }`}
                 >
                   <td className="py-3.5 px-6 text-slate-700 font-medium leading-snug">{row.feature}</td>
-                  <td className="py-3.5 px-5 text-center"><Cell value={row.solo as CellVal} /></td>
-                  <td className="py-3.5 px-5 text-center"><Cell value={row.aiAutoApply as CellVal} /></td>
-                  <td className="py-3.5 px-5 text-center"><Cell value={row.staffing as CellVal} /></td>
+                  <td className="py-3.5 px-5 text-center"><Cell value={row.solo} /></td>
+                  <td className="py-3.5 px-5 text-center"><Cell value={row.aiAutoApply} /></td>
+                  <td className="py-3.5 px-5 text-center"><Cell value={row.staffing} /></td>
                   <td className="py-3.5 px-5 text-center bg-blue-muted/30">
-                    <Cell value={row.jobblitz as CellVal} isJobBlitz />
+                    <Cell value={row.jobblitz} isJobBlitz />
                   </td>
                 </tr>
               ))}
@@ -121,7 +117,7 @@ export default function Comparison() {
         <div className="text-center">
           <Link
             href="/login?plan=free"
-            className="group inline-flex items-center gap-2 bg-peach hover:bg-peach-hover active:scale-[0.98] text-white font-bold px-8 py-4 rounded-xl transition-all duration-150 text-base shadow-lg hover:shadow-xl cursor-pointer select-none"
+            className="group inline-flex items-center gap-2 bg-blue-accent hover:bg-blue-accent-hover active:scale-[0.98] text-navy font-bold px-8 py-4 rounded-xl transition-all duration-150 text-base shadow-lg hover:shadow-xl cursor-pointer select-none"
           >
             Start for Free — No Credit Card Required
           </Link>

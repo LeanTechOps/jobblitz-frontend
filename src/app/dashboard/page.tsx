@@ -202,7 +202,7 @@ export default function DashboardPage() {
             </div>
             <Link
               href="/pricing"
-              className="flex-shrink-0 inline-flex items-center gap-2 bg-peach hover:bg-peach-hover text-white text-sm font-bold px-5 py-3 rounded-xl transition-all duration-150 active:scale-95 hover:shadow-md cursor-pointer"
+              className="flex-shrink-0 inline-flex items-center gap-2 bg-blue-accent hover:bg-blue-accent-hover text-navy text-sm font-bold px-5 py-3 rounded-xl transition-all duration-150 active:scale-95 hover:shadow-md cursor-pointer"
             >
               {plan === 'FREE' || plan === 'PRO_FREE' ? 'Upgrade Plan' : 'Manage Billing'}
               <ArrowRightIcon className="w-4 h-4" />

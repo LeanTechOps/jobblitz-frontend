@@ -7,7 +7,7 @@ import { toast } from 'react-toastify'
 import { api } from '@/lib/api'
 import ResumeRow from './ResumeRow'
 import { SectionLabel } from './shared'
-import type { Resume, ResumeMeta, ALLOWED_RESUME_TYPES } from './types'
+import type { Resume } from './types'
 import { MAX_RESUME_SIZE_MB, MAX_RESUME_SIZE } from './types'
 
 const ALLOWED_TYPES: Record<string, boolean> = {

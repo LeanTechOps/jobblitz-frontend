@@ -136,7 +136,7 @@ export default function PricingPage() {
       description: 'For active job seekers who want real results fast.',
       stripe: 'bg-blue-accent',
       accent: 'text-navy',
-      btnCls: 'bg-peach hover:bg-peach-hover text-white font-bold shadow-lg',
+      btnCls: 'bg-blue-accent hover:bg-blue-accent-hover text-navy font-bold shadow-lg',
       cardCls: 'border-navy ring-2 ring-navy/20',
       features: PLAN_INCLUDES.pro,
       monthly: priceData.pro?.monthly?.price ?? 9.99,
@@ -152,7 +152,7 @@ export default function PricingPage() {
       description: 'Max volume, outreach automation, and A/B testing.',
       stripe: 'bg-navy',
       accent: 'text-navy',
-      btnCls: 'bg-peach hover:bg-peach-hover text-white',
+      btnCls: 'bg-blue-accent hover:bg-blue-accent-hover text-navy',
       cardCls: 'border-slate-200',
       features: PLAN_INCLUDES.business,
       monthly: priceData.business?.monthly?.price ?? 25,
@@ -222,7 +222,7 @@ export default function PricingPage() {
                     <div className="flex items-center gap-2 mb-1">
                       <h2 className="text-lg font-extrabold text-navy">{plan.name}</h2>
                       {plan.badge && (
-                        <span className="text-[10px] font-bold bg-peach text-white px-2.5 py-0.5 rounded-full uppercase tracking-wide">
+                        <span className="text-[10px] font-bold bg-blue-accent text-navy px-2.5 py-0.5 rounded-full uppercase tracking-wide">
                           {plan.badge}
                         </span>
                       )}

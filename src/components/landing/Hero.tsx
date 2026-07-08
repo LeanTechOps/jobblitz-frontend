@@ -57,7 +57,7 @@ export default function Hero() {
           variants={fadeUp}
           initial="hidden"
           animate="show"
-          className="inline-flex items-center gap-2 bg-peach text-white text-xs font-bold px-4 py-1.5 rounded-full mb-8 shadow-md select-none cursor-default"
+          className="inline-flex items-center gap-2 bg-blue-accent text-navy text-xs font-bold px-4 py-1.5 rounded-full mb-8 shadow-md select-none cursor-default"
         >
           <BoltIcon className="w-3.5 h-3.5" />
           AI-powered · Apply to 100+ jobs daily automatically
@@ -104,14 +104,14 @@ export default function Hero() {
         >
           <Link
             href="/login?plan=free"
-            className="group inline-flex items-center gap-2 bg-peach hover:bg-peach-hover active:scale-95 text-white font-bold px-8 py-4 rounded-xl transition-all duration-150 shadow-lg hover:shadow-xl text-base cursor-pointer select-none"
+            className="group inline-flex items-center gap-2 bg-blue-accent hover:bg-blue-accent-hover active:scale-95 text-navy font-bold px-8 py-4 rounded-xl transition-all duration-150 shadow-lg hover:shadow-xl text-base cursor-pointer select-none"
           >
             Get Started Free
             <ArrowRightIcon className="w-4 h-4 transition-transform duration-150 group-hover:translate-x-1" />
           </Link>
           <Link
             href="/pricing"
-            className="inline-flex items-center gap-2 bg-white hover:bg-slate-50 active:scale-95 text-navy font-bold px-8 py-4 rounded-xl border-2 border-slate-200 hover:border-navy/20 transition-all duration-150 text-base cursor-pointer select-none"
+            className="inline-flex items-center gap-2 bg-blue-accent hover:bg-blue-accent-hover active:scale-95 text-navy font-bold px-8 py-4 rounded-xl transition-all duration-150 shadow-lg hover:shadow-xl text-base cursor-pointer select-none"
           >
             View Pricing
           </Link>
