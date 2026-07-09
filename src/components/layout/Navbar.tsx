@@ -14,6 +14,11 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const { isAuthenticated, user, logout, loading } = useAuth()
+  const dashboardHref =
+    user?.role === 'ADMIN' ? '/admin/dashboard' :
+    user?.role === 'MANAGER' ? '/manager/dashboard' :
+    user?.role === 'RECRUITER' ? '/recruiter/dashboard' :
+    '/dashboard'
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
@@ -39,8 +44,8 @@ export default function Navbar() {
           className="flex items-center gap-1.5 flex-shrink-0 group cursor-pointer"
         >
           <span className="text-xl font-bold tracking-tight">
-            <span className="text-navy group-hover:text-navy-light transition-colors duration-150">Job</span>
-            <span className="text-navy group-hover:text-navy-light transition-colors duration-150">Blitz</span>
+            <span className="text-navy group-hover:text-navy-light transition-colors duration-150">Jobs</span>
+            <span className="text-navy group-hover:text-navy-light transition-colors duration-150">Foundry</span>
           </span>
         </Link>
 
@@ -64,7 +69,7 @@ export default function Navbar() {
           {loading ? null : isAuthenticated ? (
             <>
               <Link
-                href="/dashboard"
+                href={dashboardHref}
                 className="text-sm font-medium text-slate-600 hover:text-navy transition-colors duration-150 cursor-pointer"
               >
                 Dashboard
@@ -125,7 +130,7 @@ export default function Navbar() {
             {isAuthenticated ? (
               <>
                 <Link
-                  href="/dashboard"
+                  href={dashboardHref}
                   onClick={() => setMobileOpen(false)}
                   className="text-sm font-semibold text-navy py-2.5 px-3 rounded-lg hover:bg-slate-50 transition-all cursor-pointer"
                 >

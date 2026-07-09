@@ -90,7 +90,7 @@ export default function Hero() {
           animate="show"
           className="text-base sm:text-lg text-slate-600 max-w-xl mx-auto mb-8 leading-relaxed"
         >
-          JobBlitz finds and applies to jobs across 500,000+ company career pages on your behalf.
+          JobsFoundry finds and applies to jobs across 500,000+ company career pages on your behalf.
           Set your preferences once — our AI handles everything else.
         </motion.p>
 
@@ -160,7 +160,7 @@ export default function Hero() {
           </div>
           <div className="text-left">
             <p className="text-sm font-bold text-navy">50,000+ job seekers</p>
-            <p className="text-xs text-slate-500">trust JobBlitz every day</p>
+            <p className="text-xs text-slate-500">trust JobsFoundry every day</p>
           </div>
         </motion.div>
 

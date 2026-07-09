@@ -2,16 +2,10 @@
 
 import { motion } from 'framer-motion'
 
-import { useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { CheckIcon } from '@heroicons/react/24/solid'
-import { api } from '@/lib/api'
-
-interface ApiPlan {
-  id: string
-  price: number
-  interval: string  // 'month' | 'year'
-}
+import { useStripePricing } from '@/hooks/useStripe'
 
 export const PLANS = [
   {
@@ -82,33 +76,23 @@ interface PricingSectionProps {
 
 export default function PricingSection({ showHeader = true }: PricingSectionProps) {
   const [annual, setAnnual] = useState(false)
-  const [livePrices, setLivePrices] = useState<Record<string, { monthly?: number; annual?: number }>>({})
-  const [pricesFetched, setPricesFetched] = useState(false)
+  const { data: rawPlans, isLoading: pricesFetching } = useStripePricing()
 
-  useEffect(() => {
-    const fetchPrices = async () => {
-      try {
-        const plans = await api.get<ApiPlan[]>('/stripe/pricing')
-        const data: Record<string, { monthly?: number; annual?: number }> = {}
-        for (const plan of plans) {
-          if (!data[plan.id]) data[plan.id] = {}
-          if (plan.interval === 'month') {
-            data[plan.id].monthly = plan.price
-          } else if (plan.interval === 'year') {
-            data[plan.id].annual = Math.round((plan.price / 12) * 100) / 100
-          }
-        }
-        setLivePrices(data)
-      } catch {
-        // silently fall back to static plan values
-      } finally {
-        setPricesFetched(true)
+  const livePrices = useMemo<Record<string, { monthly?: number; annual?: number }>>(() => {
+    if (!rawPlans) return {}
+    const data: Record<string, { monthly?: number; annual?: number }> = {}
+    for (const plan of rawPlans) {
+      if (!data[plan.id]) data[plan.id] = {}
+      if (plan.interval === 'month') {
+        data[plan.id].monthly = plan.price
+      } else if (plan.interval === 'year') {
+        data[plan.id].annual = Math.round((plan.price / 12) * 100) / 100
       }
     }
-    fetchPrices()
-  }, [])
+    return data
+  }, [rawPlans])
 
-  const hasAnyAnnual = pricesFetched && Object.values(livePrices).some((lp) => lp.annual != null)
+  const hasAnyAnnual = !pricesFetching && Object.values(livePrices).some((lp) => lp.annual != null)
 
   return (
     <section id="pricing" className="bg-gradient-to-b from-section-alt via-blue-muted/20 to-white py-12 sm:py-16 relative overflow-hidden">

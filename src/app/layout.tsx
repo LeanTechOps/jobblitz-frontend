@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from 'next/font/google'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { AuthProvider } from '@/context/AuthContext'
+import QueryProvider from '@/providers/QueryProvider'
 import './globals.css'
 
 const jakarta = Plus_Jakarta_Sans({
@@ -13,12 +14,12 @@ const jakarta = Plus_Jakarta_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'JobBlitz — Apply to 100+ Jobs Daily, Automatically',
+  title: 'JobsFoundry — Apply to 100+ Jobs Daily, Automatically',
   description:
-    'JobBlitz automates your job applications across 500,000+ company career pages. Set your preferences once and let AI land you more interviews.',
+    'JobsFoundry automates your job applications across 500,000+ company career pages. Set your preferences once and let AI land you more interviews.',
   keywords: ['job search', 'auto apply', 'job automation', 'AI job search', 'job applications'],
   openGraph: {
-    title: 'JobBlitz — Apply to 100+ Jobs Daily, Automatically',
+    title: 'JobsFoundry — Apply to 100+ Jobs Daily, Automatically',
     description: 'Automate your job search with AI. Get 3x more interviews.',
     type: 'website',
   },
@@ -32,6 +33,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={jakarta.variable}>
       <body className="min-h-screen flex flex-col antialiased">
+        <QueryProvider>
         <AuthProvider>
           {children}
           <ToastContainer
@@ -46,6 +48,7 @@ export default function RootLayout({
             theme="light"
           />
         </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   )

@@ -1,14 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
-import { api } from '@/lib/api'
+import { useStripePricing, useCreateCheckoutSession } from '@/hooks/useStripe'
 import { toast } from 'react-toastify'
 import Navbar from '@/components/layout/Navbar'
 import Footer from '@/components/layout/Footer'
 import { CheckCircleIcon } from '@heroicons/react/24/outline'
-import type { ApiPlan } from '@/types/pricing'
 
 interface PlanPriceData {
   monthly?: { price: number; priceId: string }
@@ -52,34 +51,29 @@ const INCLUDED_IN_ALL_PAID = [
 export default function PricingPage() {
   const { isAuthenticated, subscription } = useAuth()
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
-  const [priceData, setPriceData] = useState<Record<string, PlanPriceData>>({})
-  const [pricesLoading, setPricesLoading] = useState(true)
   const currentPlan = (subscription?.plan ?? 'FREE').toLowerCase()
   const currentInterval = subscription?.billingCycle === 'YEARLY' ? 'year' : 'month'
 
-  useEffect(() => {
-    const fetchPlans = async () => {
-      try {
-        const plans = await api.get<ApiPlan[]>('/stripe/pricing')
-        const data: Record<string, PlanPriceData> = {}
-        for (const plan of plans) {
-          if (!data[plan.id]) data[plan.id] = {}
-          if (plan.interval === 'month') {
-            data[plan.id].monthly = { price: plan.price, priceId: plan.stripePriceId }
-          } else if (plan.interval === 'year') {
-            data[plan.id].annual = {
-              total: plan.price,
-              perMonth: Math.round((plan.price / 12) * 100) / 100,
-              priceId: plan.stripePriceId,
-            }
-          }
+  const { data: rawPlans, isLoading: pricesLoading } = useStripePricing()
+  const checkout = useCreateCheckoutSession()
+
+  const priceData = useMemo<Record<string, PlanPriceData>>(() => {
+    if (!rawPlans) return {}
+    const data: Record<string, PlanPriceData> = {}
+    for (const plan of rawPlans) {
+      if (!data[plan.id]) data[plan.id] = {}
+      if (plan.interval === 'month') {
+        data[plan.id].monthly = { price: plan.price, priceId: plan.stripePriceId }
+      } else if (plan.interval === 'year') {
+        data[plan.id].annual = {
+          total: plan.price,
+          perMonth: Math.round((plan.price / 12) * 100) / 100,
+          priceId: plan.stripePriceId,
         }
-        setPriceData(data)
-      } catch { /* fall back to static prices */ }
-      finally { setPricesLoading(false) }
+      }
     }
-    fetchPlans()
-  }, [])
+    return data
+  }, [rawPlans])
 
   const handleSelectPlan = async (planId: string, priceId?: string) => {
     if (planId === 'free') {
@@ -96,7 +90,7 @@ export default function PricingPage() {
     }
     setLoadingPlan(priceId)
     try {
-      const { url } = await api.post<{ url: string }>('/stripe/create-subscription-session', { stripePriceId: priceId })
+      const { url } = await checkout.mutateAsync({ stripePriceId: priceId })
       window.location.href = url
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Something went wrong')
@@ -313,7 +307,7 @@ export default function PricingPage() {
               Questions?{' '}
               <Link href="/#faq" className="text-navy font-semibold hover:underline">See the FAQ</Link>
               {' '}or email{' '}
-              <a href="mailto:hello@jobblitz.ai" className="text-navy font-semibold hover:underline">hello@jobblitz.ai</a>
+              <a href="mailto:hello@jobsfoundry.ai" className="text-navy font-semibold hover:underline">hello@jobsfoundry.ai</a>
             </p>
           </div>
 

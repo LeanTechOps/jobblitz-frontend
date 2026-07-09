@@ -20,7 +20,7 @@ const STEPS = [
 function AuthCallbackInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { refetch, setIsAuthenticated } = useAuth()
+  const { refetch, setIsAuthenticated, user } = useAuth()
 
   const error = searchParams.get('error')
   const handled = useRef(false)
@@ -31,9 +31,7 @@ function AuthCallbackInner() {
 
     // ── Error path ──────────────────────────────────────────────────────────
     if (error) {
-      const msg =
-        ERROR_MESSAGES[error] ??
-        decodeURIComponent(error)
+      const msg = ERROR_MESSAGES[error] ?? decodeURIComponent(error)
       router.replace(`/login?error=${encodeURIComponent(msg)}`)
       return
     }
@@ -43,7 +41,6 @@ function AuthCallbackInner() {
       try {
         await refetch()
         setIsAuthenticated(true)
-        router.replace('/dashboard')
       } catch {
         router.replace(
           `/login?error=${encodeURIComponent('Authentication failed. Please try again.')}`,
@@ -54,12 +51,23 @@ function AuthCallbackInner() {
     run()
   }, [error, refetch, setIsAuthenticated, router])
 
+  // Once user is loaded, redirect based on role
+  useEffect(() => {
+    if (!user) return
+    const dest =
+      user.role === 'ADMIN' ? '/admin/dashboard' :
+      user.role === 'MANAGER' ? '/manager/dashboard' :
+      user.role === 'RECRUITER' ? '/recruiter/dashboard' :
+      '/dashboard'
+    router.replace(dest)
+  }, [user, router])
+
   // If there's an error param, show a brief error state while redirecting
   if (error) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
         <div className="mb-10">
-          <span className="text-2xl font-bold text-navy">JobBlitz</span>
+          <span className="text-2xl font-bold text-navy">JobsFoundry</span>
         </div>
         <div className="w-full max-w-sm bg-white border border-red-100 rounded-2xl shadow-lg p-8 text-center">
           <div className="flex items-center justify-center mb-6">
@@ -78,7 +86,7 @@ function AuthCallbackInner() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
       <div className="mb-10">
-        <span className="text-2xl font-bold text-navy">JobBlitz</span>
+        <span className="text-2xl font-bold text-navy">JobsFoundry</span>
       </div>
 
       <div className="w-full max-w-sm bg-white border border-slate-100 rounded-2xl shadow-lg p-8 text-center">

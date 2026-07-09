@@ -1,10 +1,10 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
-import { api } from '@/lib/api'
+import { useProfile, useUpdateProfile, useResumes, useDeleteResume, useSetDefaultResume, useUploadResume } from '@/hooks/useProfile'
 import { toast } from 'react-toastify'
 import { CheckCircleIcon, ArrowLeftIcon } from '@heroicons/react/24/outline'
 
@@ -13,92 +13,113 @@ import PersonalInfoCard from '@/components/profile/PersonalInfoCard'
 import ProfessionalLinksCard from '@/components/profile/ProfessionalLinksCard'
 import ResumesSection from '@/components/profile/ResumesSection'
 import JobPreferencesCard from '@/components/profile/JobPreferencesCard'
+import SkillsCard from '@/components/profile/SkillsCard'
+import VisaCard from '@/components/profile/VisaCard'
 import { SectionLabel } from '@/components/profile/shared'
-import type { ProfileData, Resume } from '@/components/profile/types'
+import type { ProfileData } from '@/components/profile/types'
 
 export default function ProfilePage() {
-  const { user, isAuthenticated, loading } = useAuth()
+  const { user, isAuthenticated, loading: authLoading } = useAuth()
   const router = useRouter()
 
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) router.replace('/login')
+  }, [isAuthenticated, authLoading, router])
+
+  // ── Data ───────────────────────────────────────────────
+  const { data: profile, isLoading: profileLoading } = useProfile()
+  const { data: resumes = [], isLoading: resumesLoading } = useResumes()
+
+  // ── Mutations ──────────────────────────────────────────
+  const updateProfile = useUpdateProfile()
+  const deleteResume = useDeleteResume()
+  const setDefault = useSetDefaultResume()
+  const uploadResume = useUploadResume()
+
+  // Local form state — seeded from query data once loaded
   const [form, setForm] = useState<ProfileData>({
     headline: '', location: '', linkedinUrl: '', githubUrl: '', portfolioUrl: '',
   })
-  const [profileLoaded, setProfileLoaded] = useState(false)
-  const [saving, setSaving] = useState(false)
-  const [resumes, setResumes] = useState<Resume[]>([])
-  const [resumesLoaded, setResumesLoaded] = useState(false)
-  const [busyResumeId, setBusyResumeId] = useState<string | null>(null)
+  const [skills, setSkills] = useState<string[]>([])
+  const [visaType, setVisaType] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) router.replace('/login')
-  }, [isAuthenticated, loading, router])
-
-  const loadProfile = useCallback(async () => {
-    try {
-      const data = await api.get<ProfileData>('/profile')
+    if (profile) {
       setForm({
-        headline: data.headline ?? '',
-        location: data.location ?? '',
-        linkedinUrl: data.linkedinUrl ?? '',
-        githubUrl: data.githubUrl ?? '',
-        portfolioUrl: data.portfolioUrl ?? '',
+        headline: profile.headline ?? '',
+        location: profile.location ?? '',
+        linkedinUrl: profile.linkedinUrl ?? '',
+        githubUrl: profile.githubUrl ?? '',
+        portfolioUrl: profile.portfolioUrl ?? '',
       })
-    } catch { toast.error('Failed to load profile') }
-    finally { setProfileLoaded(true) }
-  }, [])
+      setSkills(profile.skills ?? [])
+      setVisaType(profile.visaType ?? null)
+    }
+  }, [profile])
 
-  const loadResumes = useCallback(async () => {
-    try {
-      const list = await api.get<Resume[]>('/profile/resumes')
-      setResumes(list.map(r => ({ ...r, downloadUrl: null })))
-    } catch { toast.error('Failed to load resumes') }
-    finally { setResumesLoaded(true) }
-  }, [])
-
-  useEffect(() => {
-    if (isAuthenticated) { loadProfile(); loadResumes() }
-  }, [isAuthenticated, loadProfile, loadResumes])
-
-  if (loading || !user) return (
-    <div className="min-h-screen flex items-center justify-center bg-section-alt">
-      <div className="w-7 h-7 border-2 border-navy border-t-transparent rounded-full animate-spin" />
-    </div>
-  )
+  if (authLoading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-section-alt">
+        <div className="w-7 h-7 border-2 border-navy border-t-blue-accent rounded-full animate-spin" />
+      </div>
+    )
+  }
 
   const initials = ((user.firstName?.[0] ?? '') + (user.lastName?.[0] ?? '')).toUpperCase() || user.email[0].toUpperCase()
   const displayName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email
-  const onChange = (k: keyof ProfileData) => (v: string) => setForm(f => ({ ...f, [k]: v }))
+  const onChange = (k: keyof ProfileData) => (v: string) => setForm((f) => ({ ...f, [k]: v }))
 
   const handleSave = async () => {
-    setSaving(true)
+    // URL fields: send null explicitly when cleared so backend actually clears them.
+    // Other string fields: drop empties (backend ignores missing optional fields).
+    const urlFields = ['linkedinUrl', 'githubUrl', 'portfolioUrl'] as const
+    const isBarePrefixOnly = (url: string) =>
+      /^https?:\/\/(www\.)?(linkedin\.com\/in|github\.com)\/?$/i.test(url)
+
+    const nonUrlEntries = Object.entries(form)
+      .filter(([k, v]) => !urlFields.includes(k as typeof urlFields[number]) && v !== '')
+    const urlEntries = urlFields.map((k) => {
+      const v = form[k]
+      const cleared = !v || isBarePrefixOnly(v)
+      return [k, cleared ? null : v]
+    })
+    const payload = { ...Object.fromEntries([...nonUrlEntries, ...urlEntries]), skills, visaType: visaType ?? null }
     try {
-      const payload = Object.fromEntries(Object.entries(form).filter(([, v]) => v !== ''))
-      await api.patch('/profile', payload)
+      await updateProfile.mutateAsync(payload as Partial<ProfileData>)
       toast.success('Profile saved!')
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : 'Failed to save profile')
-    } finally { setSaving(false) }
+    } catch {
+      toast.error('Failed to save profile')
+    }
   }
 
-  const handleSetDefault = async (resumeId: string) => {
-    setBusyResumeId(resumeId)
+  const handleSetDefault = async (id: string) => {
     try {
-      await api.patch(`/profile/resumes/${resumeId}/default`)
+      await setDefault.mutateAsync(id)
       toast.success('Default resume updated')
-      await loadResumes()
-    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Failed') }
-    finally { setBusyResumeId(null) }
+    } catch {
+      toast.error('Failed to set default')
+    }
   }
 
-  const handleDelete = async (resumeId: string) => {
-    setBusyResumeId(resumeId)
+  const handleDelete = async (id: string) => {
     try {
-      await api.delete(`/profile/resumes/${resumeId}`)
+      await deleteResume.mutateAsync(id)
       toast.success('Resume deleted')
-      setResumes(p => p.filter(r => r.id !== resumeId))
-    } catch (err: unknown) { toast.error(err instanceof Error ? err.message : 'Failed') }
-    finally { setBusyResumeId(null) }
+    } catch {
+      toast.error('Failed to delete resume')
+    }
   }
+
+  const handleUpload = async (file: File, label?: string) => {
+    try {
+      await uploadResume.mutateAsync({ file, label })
+      toast.success('Resume uploaded!')
+    } catch {
+      toast.error('Upload failed')
+    }
+  }
+
+  const saving = updateProfile.isPending
 
   return (
     <div className="min-h-screen bg-section-alt flex flex-col">
@@ -113,12 +134,12 @@ export default function ProfilePage() {
             </Link>
             <div className="h-5 w-px bg-slate-200" />
             <Link href="/" className="cursor-pointer">
-              <span className="text-xl font-bold text-navy">JobBlitz</span>
+              <span className="text-xl font-bold text-navy">JobsFoundry</span>
             </Link>
           </div>
           <button
             onClick={handleSave}
-            disabled={saving || !profileLoaded}
+            disabled={saving || profileLoading}
             className="inline-flex items-center gap-2 bg-blue-accent hover:bg-blue-accent-hover disabled:opacity-50 active:scale-[0.98] text-navy text-sm font-bold px-6 py-2.5 rounded-xl transition-all duration-150 cursor-pointer shadow-lg"
           >
             {saving
@@ -141,35 +162,46 @@ export default function ProfilePage() {
       {/* Content */}
       <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 py-12 space-y-12">
 
-        {/* Profile section */}
         <div>
           <SectionLabel>Profile Details</SectionLabel>
           <div className="grid lg:grid-cols-2 gap-6">
             <PersonalInfoCard
               user={user}
               form={form}
-              loaded={profileLoaded}
+              loaded={!profileLoading}
               onChange={onChange}
             />
             <ProfessionalLinksCard
               form={form}
-              loaded={profileLoaded}
+              loaded={!profileLoading}
               onChange={onChange}
             />
           </div>
         </div>
 
-        {/* Resume section */}
+        <div>
+          <SectionLabel>Skills</SectionLabel>
+          <SkillsCard skills={skills} onChange={setSkills} />
+        </div>
+
+        <div>
+          <SectionLabel>Work Authorization</SectionLabel>
+          <VisaCard value={visaType} onChange={setVisaType} />
+        </div>
+
         <ResumesSection
           resumes={resumes}
-          loaded={resumesLoaded}
-          busyResumeId={busyResumeId}
-          onReload={loadResumes}
+          loaded={!resumesLoading}
+          uploading={uploadResume.isPending}
+          busyResumeId={
+            deleteResume.isPending ? (deleteResume.variables as string) :
+            setDefault.isPending ? (setDefault.variables as string) : null
+          }
+          onUpload={handleUpload}
           onSetDefault={handleSetDefault}
           onDelete={handleDelete}
         />
 
-        {/* Preferences */}
         <JobPreferencesCard />
 
       </main>

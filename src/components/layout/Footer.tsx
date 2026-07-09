@@ -26,7 +26,7 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="inline-block mb-4 group cursor-pointer">
               <span className="text-xl font-bold">
-                <span className="text-white group-hover:text-blue-accent transition-colors duration-150">JobBlitz</span>
+                <span className="text-white group-hover:text-blue-accent transition-colors duration-150">JobsFoundry</span>
               </span>
             </Link>
             <p className="text-slate-300 text-sm leading-relaxed max-w-xs">
@@ -59,7 +59,7 @@ export default function Footer() {
 
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-slate-400">
-            © {new Date().getFullYear()} JobBlitz. All rights reserved.
+            © {new Date().getFullYear()} JobsFoundry. All rights reserved.
           </p>
           <p className="text-sm text-slate-500">
             Built to help you land your dream job faster.

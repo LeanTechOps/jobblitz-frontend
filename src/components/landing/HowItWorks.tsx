@@ -10,7 +10,7 @@ const STEPS = [
     icon: UserCircleIcon,
     title: 'Create Your Profile',
     description:
-      'Upload your resume, fill in your skills and experience once. JobBlitz uses this to personalise every application on your behalf.',
+      'Upload your resume, fill in your skills and experience once. JobsFoundry uses this to personalise every application on your behalf.',
     num: 'bg-blue-accent text-navy border-blue-accent',
     card: 'hover:border-blue-accent/30 hover:shadow-blue-muted',
     iconColor: 'text-navy',
@@ -32,7 +32,7 @@ const STEPS = [
     icon: TrophyIcon,
     title: 'Sit Back & Get Interviews',
     description:
-      'JobBlitz applies to new matching jobs daily. Track every application in your dashboard and focus on preparing for the interviews that follow.',
+      'JobsFoundry applies to new matching jobs daily. Track every application in your dashboard and focus on preparing for the interviews that follow.',
     num: 'bg-emerald-500 text-white border-emerald-500',
     card: 'hover:border-emerald-300 hover:shadow-emerald-100',
     iconColor: 'text-emerald-600',

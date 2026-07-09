@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DocumentTextIcon, StarIcon, TrashIcon, ArrowDownTrayIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { StarIcon as StarSolid } from '@heroicons/react/24/solid'
-import { api } from '@/lib/api'
+import { useResumeUrl } from '@/hooks/useProfile'
 import { toast } from 'react-toastify'
 import type { Resume } from './types'
 
@@ -61,25 +61,16 @@ function ThumbnailModal({ url, name, onClose }: { url: string; name: string; onC
 export default function ResumeRow({ resume, onSetDefault, onDelete, busy }: Props) {
   const isBusy = busy === resume.id
   const [showPreview, setShowPreview] = useState(false)
-  const [downloading, setDownloading] = useState(false)
-  const downloadUrlRef = useRef<string | null>(resume.downloadUrl)
+  const { refetch, isFetching: downloading } = useResumeUrl(resume.id)
 
   const handleDownload = async () => {
     if (downloading) return
-    // Use cached URL if still valid, otherwise fetch a fresh one
-    if (!downloadUrlRef.current) {
-      setDownloading(true)
-      try {
-        const { downloadUrl } = await api.get<{ downloadUrl: string }>(`/profile/resumes/${resume.id}/url`)
-        downloadUrlRef.current = downloadUrl
-      } catch {
-        toast.error('Failed to get download link')
-        setDownloading(false)
-        return
-      }
-      setDownloading(false)
+    const { data, error } = await refetch()
+    if (error || !data?.downloadUrl) {
+      toast.error('Failed to get download link')
+      return
     }
-    window.open(downloadUrlRef.current, '_blank', 'noreferrer')
+    window.open(data.downloadUrl, '_blank', 'noreferrer')
   }
 
   return (

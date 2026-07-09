@@ -1,56 +1,46 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useMemo, useState } from 'react'
 import { CheckIcon } from '@heroicons/react/24/outline'
 import { useAuth } from '@/context/AuthContext'
-import { api } from '@/lib/api'
+import { useStripePricing, useCreateCheckoutSession } from '@/hooks/useStripe'
 import { toast } from 'react-toastify'
-import type { ApiPlan, PlanOption } from '@/types/pricing'
+import type { PlanOption } from '@/types/pricing'
 
 export default function PlanBilling() {
   const { subscription } = useAuth()
   const plan = subscription?.plan ?? 'FREE'
   const isFreePlan = subscription !== null ? plan === 'FREE' : false
 
-  const [plans, setPlans] = useState<PlanOption[]>([])
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
 
-  const fetchPlans = useCallback(async () => {
-    try {
-      const data = await api.get<ApiPlan[]>('/stripe/pricing')
-      const seen = new Set<string>()
-      const monthly: PlanOption[] = []
-      for (const p of data) {
-        if (p.interval === 'month' && !seen.has(p.id)) {
-          seen.add(p.id)
-          monthly.push({
-            id: p.id,
-            name: p.name,
-            price: p.price,
-            stripePriceId: p.stripePriceId,
-            popular: p.popular,
-            features: p.features,
-          })
-        }
-      }
-      monthly.sort((a, b) => a.price - b.price)
-      setPlans(monthly)
-    } catch {
-      // silently ignore — section stays hidden if fetch fails
-    }
-  }, [])
+  const { data: rawPlans } = useStripePricing()
+  const checkout = useCreateCheckoutSession()
 
-  useEffect(() => {
-    fetchPlans()
-  }, [fetchPlans])
+  const plans: PlanOption[] = useMemo(() => {
+    if (!rawPlans) return []
+    const seen = new Set<string>()
+    const monthly: PlanOption[] = []
+    for (const p of rawPlans) {
+      if (p.interval === 'month' && !seen.has(p.id)) {
+        seen.add(p.id)
+        monthly.push({
+          id: p.id,
+          name: p.name,
+          price: p.price,
+          stripePriceId: p.stripePriceId,
+          popular: p.popular,
+          features: p.features,
+        })
+      }
+    }
+    return monthly.sort((a, b) => a.price - b.price)
+  }, [rawPlans])
 
   const handleSubscribe = async (stripePriceId: string, planId: string) => {
     setLoadingPlan(planId)
     try {
-      const { url } = await api.post<{ url: string }>('/stripe/create-subscription-session', {
-        stripePriceId,
-        flowType: 'subscription_update',
-      })
+      const { url } = await checkout.mutateAsync({ stripePriceId, flowType: 'subscription_update' })
       if (url) window.open(url, '_blank')
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Something went wrong. Please try again.')

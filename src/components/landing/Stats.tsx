@@ -7,7 +7,7 @@ const STATS = [
   {
     value: '78%',
     label: 'of users land interviews',
-    context: 'within the first 3 months of using JobBlitz.',
+    context: 'within the first 3 months of using JobsFoundry.',
   },
   {
     value: '40%',
@@ -22,7 +22,7 @@ const STATS = [
   {
     value: '50K+',
     label: 'active job seekers',
-    context: 'Trust JobBlitz to automate their applications every day.',
+    context: 'Trust JobsFoundry to automate their applications every day.',
   },
 ]
 

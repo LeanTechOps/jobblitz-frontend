@@ -42,7 +42,7 @@ function BrowserFrame({ children }: { children: React.ReactNode }) {
           <span className="w-3 h-3 rounded-full bg-emerald-400" />
         </div>
         <div className="flex-1 bg-white rounded-md px-3 py-1 text-[11px] text-slate-400 border border-slate-200">
-          app.jobblitz.ai
+          app.jobsfoundry.ai
         </div>
       </div>
       <div className="p-5 bg-slate-50 min-h-[300px]">{children}</div>
@@ -238,12 +238,12 @@ function OutreachPreview() {
 
 /* ─── Feature list ───────────────────────────────────────── */
 const FEATURES = [
-  { id: 'auto-apply', icon: BoltIcon, title: 'Auto-Apply Engine', short: 'Apply to 100+ jobs daily, automatically.', description: 'Set your preferences once. JobBlitz applies to perfectly matched roles every single day — custom resume and cover letter included — while you focus on interview prep.', accent: '#3b82f6', Preview: AutoApplyPreview },
+  { id: 'auto-apply', icon: BoltIcon, title: 'Auto-Apply Engine', short: 'Apply to 100+ jobs daily, automatically.', description: 'Set your preferences once. JobsFoundry applies to perfectly matched roles every single day — custom resume and cover letter included — while you focus on interview prep.', accent: '#3b82f6', Preview: AutoApplyPreview },
   { id: 'tracker', icon: ClipboardDocumentListIcon, title: 'Job Application Tracker', short: 'Every application in one organised dashboard.', description: 'Never lose track of where you applied. See every application, its status, and follow-up actions in a clean kanban-style pipeline.', accent: '#10b981', Preview: TrackerPreview },
-  { id: 'resume', icon: DocumentTextIcon, title: 'AI Resume Tailoring', short: 'Each job gets its own AI-optimised resume.', description: 'Generic resumes get ignored. JobBlitz rewrites your resume for every role — matching keywords, adjusting tone, and maximising your ATS score automatically.', accent: '#8b5cf6', Preview: ResumePreview },
+  { id: 'resume', icon: DocumentTextIcon, title: 'AI Resume Tailoring', short: 'Each job gets its own AI-optimised resume.', description: 'Generic resumes get ignored. JobsFoundry rewrites your resume for every role — matching keywords, adjusting tone, and maximising your ATS score automatically.', accent: '#8b5cf6', Preview: ResumePreview },
   { id: 'cover-letter', icon: PencilSquareIcon, title: 'AI Cover Letter Generator', short: 'Personalised, keyword-rich letters in seconds.', description: 'Every application ships with a cover letter that reads like you wrote it yourself — personalised to the company, role, and hiring manager.', accent: '#f59e0b', Preview: CoverLetterPreview },
   { id: 'analytics', icon: ChartBarIcon, title: 'Performance Analytics', short: 'See what works — and double down on it.', description: 'Track response rates by role, company size, and location. Know exactly which applications perform best so you can optimise your search strategy.', accent: '#ef4444', Preview: AnalyticsPreview },
-  { id: 'outreach', icon: EnvelopeIcon, title: 'Recruiter Outreach', short: 'Email hiring managers automatically.', description: 'JobBlitz finds the right recruiter or hiring manager at target companies and sends personalised outreach emails on your behalf.', accent: '#06b6d4', Preview: OutreachPreview },
+  { id: 'outreach', icon: EnvelopeIcon, title: 'Recruiter Outreach', short: 'Email hiring managers automatically.', description: 'JobsFoundry finds the right recruiter or hiring manager at target companies and sends personalised outreach emails on your behalf.', accent: '#06b6d4', Preview: OutreachPreview },
 ]
 
 /* ─── Main component ─────────────────────────────────────── */

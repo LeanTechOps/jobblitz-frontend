@@ -6,9 +6,9 @@ import { cn } from '@/lib/utils'
 
 const FAQS = [
   {
-    question: 'How does JobBlitz auto-apply to jobs?',
+    question: 'How does JobsFoundry auto-apply to jobs?',
     answer:
-      'JobBlitz scans 500,000+ company career pages daily for new postings that match your preferences. When a match is found, it fills and submits the application form using your profile — exactly like a manual application, just done automatically at scale.',
+      'JobsFoundry scans 500,000+ company career pages daily for new postings that match your preferences. When a match is found, it fills and submits the application form using your profile — exactly like a manual application, just done automatically at scale.',
   },
   {
     question: 'Will employers know my application was automated?',
@@ -16,7 +16,7 @@ const FAQS = [
       'No. Applications are submitted through standard application flows, indistinguishable from a manual submission. Employers see a normal, complete, personalised application.',
   },
   {
-    question: 'Can I control which jobs JobBlitz applies to?',
+    question: 'Can I control which jobs JobsFoundry applies to?',
     answer:
       'Absolutely. Set job titles, locations, salary range, seniority level, and specific companies to include or exclude. You can also switch to manual review mode to approve each application before it goes out.',
   },
@@ -66,7 +66,7 @@ export default function FAQ() {
           <p className="text-slate-700 font-medium">
             95% of questions answered here. Can&apos;t find what you&apos;re looking for?{' '}
             <a
-              href="mailto:hello@jobblitz.ai"
+              href="mailto:hello@jobsfoundry.ai"
               className="text-navy font-semibold hover:text-navy-light hover:underline transition-colors duration-150"
             >
               Email us
@@ -125,10 +125,10 @@ export default function FAQ() {
           <p className="text-slate-600 text-sm">
             Still have questions?{' '}
             <a
-              href="mailto:hello@jobblitz.ai"
+              href="mailto:hello@jobsfoundry.ai"
               className="text-navy font-semibold hover:underline"
             >
-              hello@jobblitz.ai
+              hello@jobsfoundry.ai
             </a>
           </p>
         </div>
