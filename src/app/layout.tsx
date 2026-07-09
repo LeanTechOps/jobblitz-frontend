@@ -18,10 +18,19 @@ export const metadata: Metadata = {
   description:
     'JobsFoundry automates your job applications across 500,000+ company career pages. Set your preferences once and let AI land you more interviews.',
   keywords: ['job search', 'auto apply', 'job automation', 'AI job search', 'job applications'],
+  icons: {
+    icon: [
+      { url: '/logo.png', sizes: '512x512', type: 'image/png' },
+      { url: '/logo.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    shortcut: '/logo.png',
+  },
   openGraph: {
     title: 'JobsFoundry — Apply to 100+ Jobs Daily, Automatically',
     description: 'Automate your job search with AI. Get 3x more interviews.',
     type: 'website',
+    images: [{ url: '/logo.png', width: 512, height: 512 }],
   },
 }
 
