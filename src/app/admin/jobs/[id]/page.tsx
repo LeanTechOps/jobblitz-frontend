@@ -1,12 +1,14 @@
 'use client'
 
+import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import {
   ChevronLeftIcon, PencilSquareIcon, MapPinIcon, BriefcaseIcon,
-  CurrencyDollarIcon, CalendarDaysIcon, CheckBadgeIcon, GlobeAltIcon,
+  CurrencyDollarIcon, CalendarDaysIcon, CheckBadgeIcon, GlobeAltIcon, UserPlusIcon, UsersIcon,
 } from '@heroicons/react/24/outline'
 import { useJob } from '@/hooks/useJobs'
+import ApplyUserModal from '@/components/admin/ApplyUserModal'
 
 const STATUS_PILL: Record<string, string> = {
   ACTIVE: 'bg-blue-accent text-navy font-bold',
@@ -50,6 +52,7 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 export default function ViewJobPage() {
   const { id } = useParams<{ id: string }>()
   const { data: job, isLoading } = useJob(id)
+  const [showApplyModal, setShowApplyModal] = useState(false)
 
   if (isLoading) {
     return (
@@ -103,13 +106,29 @@ export default function ViewJobPage() {
             <p className="text-sm text-slate-600 mt-0.5">{job.company}{job.location ? ` · ${job.location}` : ''}</p>
           </div>
         </div>
-        <Link
-          href={`/admin/jobs/${job.id}/edit`}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-accent hover:bg-blue-accent-hover text-navy font-bold text-sm rounded-xl transition-colors shrink-0 cursor-pointer"
-        >
-          <PencilSquareIcon className="w-4 h-4" />
-          Edit
-        </Link>
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+          <Link
+            href={`/admin/jobs/${job.id}/applications`}
+            className="inline-flex items-center gap-2 px-4 py-2 border border-[#4a7c59]/30 text-[#1a2e1a] hover:bg-[#eef7ee] font-bold text-sm rounded-xl transition-colors cursor-pointer"
+          >
+            <UsersIcon className="w-4 h-4" />
+            Applicants
+          </Link>
+          <button
+            onClick={() => setShowApplyModal(true)}
+            className="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-[#4a7c59] hover:bg-[#3d6b4a] text-white font-bold text-sm rounded-xl transition-colors"
+          >
+            <UserPlusIcon className="w-4 h-4" />
+            Apply User
+          </button>
+          <Link
+            href={`/admin/jobs/${job.id}/edit`}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-blue-accent hover:bg-blue-accent-hover text-navy font-bold text-sm rounded-xl transition-colors cursor-pointer"
+          >
+            <PencilSquareIcon className="w-4 h-4" />
+            Edit
+          </Link>
+        </div>
       </div>
 
       {/* Details grid */}
@@ -201,6 +220,14 @@ export default function ViewJobPage() {
         <Row label="Created" value={new Date(job.createdAt).toLocaleDateString()} />
         <Row label="Listing ID" value={<span className="font-mono text-xs text-slate-500">{job.id}</span>} />
       </Section>
+
+      {showApplyModal && (
+        <ApplyUserModal
+          jobId={job.id}
+          jobTitle={`${job.title} — ${job.company}`}
+          onClose={() => setShowApplyModal(false)}
+        />
+      )}
     </div>
   )
 }

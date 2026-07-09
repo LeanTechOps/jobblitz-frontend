@@ -5,18 +5,16 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
 import {
-  BoltIcon,
-  ChartBarIcon,
-  ClipboardDocumentListIcon,
-  Cog6ToothIcon,
-  CreditCardIcon,
-  ArrowRightIcon,
+  BoltIcon, ChartBarIcon, ClipboardDocumentListIcon,
+  Cog6ToothIcon, CreditCardIcon, ArrowRightIcon, BriefcaseIcon,
 } from '@heroicons/react/24/outline'
+import { useMyApplications } from '@/hooks/useApplications'
+import ApplicationCard from '@/components/dashboard/ApplicationCard'
 
 const PLAN_BADGE_COLOR: Record<string, string> = {
-  FREE: 'bg-slate-100 text-slate-700',
+  FREE:     'bg-slate-100 text-slate-700',
   PRO_FREE: 'bg-amber-50 text-amber-700 border border-amber-200',
-  PRO: 'bg-blue-muted text-navy',
+  PRO:      'bg-blue-muted text-navy',
   BUSINESS: 'bg-navy text-white',
 }
 
@@ -24,41 +22,13 @@ const PLAN_DISPLAY_NAME: Record<string, string> = {
   PRO_FREE: 'Trial',
 }
 
-const QUICK_ACTIONS = [
-  {
-    icon: BoltIcon,
-    iconColor: 'text-navy',
-    iconBg: 'bg-blue-muted',
-    title: 'Start Auto-Applying',
-    description: 'Set up your preferences and let AI apply for you.',
-    href: null,
-  },
-  {
-    icon: ClipboardDocumentListIcon,
-    iconColor: 'text-emerald-600',
-    iconBg: 'bg-emerald-50',
-    title: 'View Applications',
-    description: 'Track every job application in one place.',
-    href: null,
-  },
-  {
-    icon: Cog6ToothIcon,
-    iconColor: 'text-violet-600',
-    iconBg: 'bg-violet-50',
-    title: 'Configure Profile',
-    description: 'Upload your resume and set job preferences.',
-    href: '/profile',
-  },
-]
-
 export default function DashboardPage() {
   const { user, subscription, isAuthenticated, loading, logout } = useAuth()
   const router = useRouter()
+  const { data: applications = [], isLoading: appsLoading } = useMyApplications()
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
-      router.replace('/login')
-    }
+    if (!loading && !isAuthenticated) router.replace('/login')
   }, [isAuthenticated, loading, router])
 
   if (loading || !user) {
@@ -72,6 +42,10 @@ export default function DashboardPage() {
   const firstName = user.firstName ?? user.email.split('@')[0]
   const plan = subscription?.plan ?? 'FREE'
 
+  const totalApps  = applications.length
+  const interviews = applications.filter((a) => a.status === 'INTERVIEW').length
+  const offers     = applications.filter((a) => a.status === 'OFFER').length
+
   return (
     <div className="min-h-screen bg-section-alt flex flex-col">
 
@@ -79,11 +53,8 @@ export default function DashboardPage() {
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="group cursor-pointer">
-            <span className="text-xl font-bold text-navy group-hover:text-navy-light transition-colors duration-150">
-              JobBlitz
-            </span>
+            <span className="text-xl font-bold text-navy group-hover:text-navy-light transition-colors duration-150">JobBlitz</span>
           </Link>
-
           <div className="flex items-center gap-4">
             {subscription !== null ? (
               <span className={`text-xs font-bold px-2.5 py-1 rounded-full cursor-default select-none ${PLAN_BADGE_COLOR[plan] ?? PLAN_BADGE_COLOR.FREE}`}>
@@ -92,11 +63,9 @@ export default function DashboardPage() {
             ) : (
               <span className="inline-block w-14 h-5 rounded-full bg-slate-100 animate-pulse" />
             )}
-
-            <div className="w-8 h-8 rounded-full bg-navy text-white text-xs font-bold flex items-center justify-center hover:bg-slate-700 transition-colors duration-150 cursor-default select-none">
+            <div className="w-8 h-8 rounded-full bg-navy text-white text-xs font-bold flex items-center justify-center cursor-default select-none">
               {(user.firstName?.[0] ?? user.email[0]).toUpperCase()}
             </div>
-
             <button
               onClick={logout}
               className="text-sm text-slate-500 hover:text-slate-800 hover:underline active:scale-95 transition-all duration-150 hidden sm:block cursor-pointer"
@@ -112,24 +81,19 @@ export default function DashboardPage() {
         {/* Welcome */}
         <div>
           <p className="text-xs font-semibold text-navy uppercase tracking-widest mb-1">Dashboard</p>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-navy">
-            Welcome back, {firstName} 👋
-          </h1>
-          <p className="text-slate-700 font-medium mt-1">Here&apos;s your job search overview for today.</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-navy">Welcome back, {firstName} 👋</h1>
+          <p className="text-slate-700 font-medium mt-1">Here&apos;s your job search overview.</p>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: 'Applications Sent', value: '0', sub: 'Start auto-applying to see this', icon: BoltIcon, color: 'text-navy', iconBg: 'bg-blue-muted' },
-            { label: 'Active Jobs', value: '0', sub: 'Jobs being tracked', icon: ClipboardDocumentListIcon, color: 'text-emerald-600', iconBg: 'bg-emerald-50' },
-            { label: 'Interview Requests', value: '0', sub: 'From applications sent', icon: ChartBarIcon, color: 'text-violet-600', iconBg: 'bg-violet-50' },
-            { label: 'Response Rate', value: '—', sub: 'Available after first batch', icon: ChartBarIcon, color: 'text-amber-600', iconBg: 'bg-amber-50' },
+            { label: 'Applications',  value: String(totalApps),  sub: 'Jobs applied to',               icon: ClipboardDocumentListIcon, color: 'text-navy',        iconBg: 'bg-blue-muted' },
+            { label: 'Interviews',    value: String(interviews), sub: 'Active interview stages',         icon: ChartBarIcon,              color: 'text-amber-600',   iconBg: 'bg-amber-50' },
+            { label: 'Offers',        value: String(offers),     sub: 'Job offers received',             icon: BoltIcon,                  color: 'text-emerald-600', iconBg: 'bg-emerald-50' },
+            { label: 'Response Rate', value: totalApps > 0 ? `${Math.round(((interviews + offers) / totalApps) * 100)}%` : '—', sub: 'Interviews + offers / apps', icon: ChartBarIcon, color: 'text-violet-600', iconBg: 'bg-violet-50' },
           ].map((stat) => (
-            <div
-              key={stat.label}
-              className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm cursor-default"
-            >
+            <div key={stat.label} className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm cursor-default">
               <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl ${stat.iconBg} ${stat.color} mb-4`}>
                 <stat.icon className="w-5 h-5" />
               </div>
@@ -140,46 +104,71 @@ export default function DashboardPage() {
           ))}
         </div>
 
-        {/* Quick Actions */}
+        {/* Applications */}
+        <div>
+          <p className="text-sm font-semibold text-navy uppercase tracking-widest mb-4">My Applications</p>
+          {appsLoading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-24 bg-white rounded-2xl border border-slate-200 animate-pulse" />
+              ))}
+            </div>
+          ) : applications.length === 0 ? (
+            <div className="bg-white border border-slate-200 rounded-2xl p-10 text-center shadow-sm">
+              <BriefcaseIcon className="w-10 h-10 mx-auto mb-3 text-navy/30" />
+              <p className="text-base font-bold text-navy">No applications yet</p>
+              <p className="text-sm font-medium text-slate-600 mt-1">
+                Our team will apply you to matching roles. Check back soon.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {applications.map((app) => (
+                <ApplicationCard key={app.id} app={app} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Quick actions */}
         <div>
           <p className="text-sm font-semibold text-navy uppercase tracking-widest mb-4">Quick Actions</p>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {QUICK_ACTIONS.map((action) => {
-              const inner = (
-                <>
-                  <div className="flex items-start justify-between mb-5">
-                    <div className={`inline-flex items-center justify-center w-11 h-11 rounded-xl ${action.iconBg} ${action.iconColor}`}>
-                      <action.icon className="w-5 h-5" />
-                    </div>
-                    <span className={`text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${action.href ? 'bg-blue-muted text-navy' : 'bg-slate-100 text-slate-600'}`}>
-                      {action.href ? 'Set up →' : 'Coming soon'}
-                    </span>
-                  </div>
-                  <h3 className="text-lg font-bold text-navy">{action.title}</h3>
-                  <p className="text-sm font-medium text-slate-700 mt-2 leading-relaxed">{action.description}</p>
-                </>
-              )
-              return action.href ? (
-                <Link
-                  key={action.title}
-                  href={action.href}
-                  className="group bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-navy/30 hover:shadow-md transition-all duration-150 cursor-pointer select-none"
-                >
-                  {inner}
-                </Link>
-              ) : (
-                <div
-                  key={action.title}
-                  className="group bg-white border border-slate-200 rounded-2xl p-6 shadow-sm cursor-default select-none opacity-80"
-                >
-                  {inner}
+          <div className="grid sm:grid-cols-2 gap-4">
+            <Link
+              href="/profile"
+              className="group bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:border-navy/30 hover:shadow-md transition-all duration-150 cursor-pointer select-none"
+            >
+              <div className="flex items-start justify-between mb-5">
+                <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-violet-50 text-violet-600">
+                  <Cog6ToothIcon className="w-5 h-5" />
                 </div>
-              )
-            })}
+                <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-blue-muted text-navy">
+                  Set up →
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-navy">Configure Profile</h3>
+              <p className="text-sm font-medium text-slate-700 mt-2 leading-relaxed">
+                Upload your resume and set job preferences so we can apply to the best roles for you.
+              </p>
+            </Link>
+            <div className="group bg-white border border-slate-200 rounded-2xl p-6 shadow-sm cursor-default select-none opacity-80">
+              <div className="flex items-start justify-between mb-5">
+                <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-blue-muted text-navy">
+                  <BoltIcon className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
+                  Coming soon
+                </span>
+              </div>
+              <h3 className="text-lg font-bold text-navy">Start Auto-Applying</h3>
+              <p className="text-sm font-medium text-slate-700 mt-2 leading-relaxed">
+                Set up your preferences and let AI apply for you automatically.
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Plan & Billing card */}
+        {/* Plan & Billing */}
         <div>
           <p className="text-sm font-semibold text-navy uppercase tracking-widest mb-4">Plan &amp; Billing</p>
           <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex items-center justify-between gap-6">

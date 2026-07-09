@@ -133,6 +133,8 @@ export interface AdminUserProfile {
       label: string | null
       isDefault: boolean
       createdAt: string
+      thumbnailKey: string | null
+      thumbnailUrl: string | null
     }[]
   } | null
 }
