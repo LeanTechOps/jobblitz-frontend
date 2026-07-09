@@ -207,11 +207,24 @@ export default function ApplyUserModal({ jobId, jobTitle, onClose }: Props) {
                             : 'border-[#2d4a2d]/15 bg-[#f8fdf8] hover:border-[#4a7c59]/40'
                         }`}
                       >
-                        <div className="shrink-0 w-12 h-16 rounded-lg overflow-hidden bg-[#e8f0e8] flex items-center justify-center border border-[#2d4a2d]/10">
+                        <div
+                          className={`shrink-0 w-12 h-16 rounded-lg overflow-hidden bg-[#e8f0e8] flex items-center justify-center border border-[#2d4a2d]/10 relative group/thumb ${resume.downloadUrl ? 'cursor-pointer' : ''}`}
+                          onClick={(e) => {
+                            if (!resume.downloadUrl) return
+                            e.stopPropagation()
+                            window.open(resume.downloadUrl, '_blank', 'noopener,noreferrer')
+                          }}
+                          title={resume.downloadUrl ? 'Open resume' : undefined}
+                        >
                           {resume.thumbnailUrl ? (
                             <img src={resume.thumbnailUrl} alt="Resume preview" className="w-full h-full object-cover" />
                           ) : (
                             <DocumentIcon className="h-6 w-6 text-[#1a2e1a]/50" />
+                          )}
+                          {resume.downloadUrl && (
+                            <div className="absolute inset-0 bg-[#1a2e1a]/40 opacity-0 group-hover/thumb:opacity-100 transition-opacity duration-150 flex items-center justify-center">
+                              <span className="text-white text-[9px] font-bold tracking-wide">OPEN</span>
+                            </div>
                           )}
                         </div>
                         <div className="flex-1 min-w-0">

@@ -135,6 +135,7 @@ export interface AdminUserProfile {
       createdAt: string
       thumbnailKey: string | null
       thumbnailUrl: string | null
+      downloadUrl: string | null
     }[]
   } | null
 }
