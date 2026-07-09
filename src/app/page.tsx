@@ -46,7 +46,7 @@ export default function LandingPage() {
             </div>
 
             <h2 className="text-3xl sm:text-5xl font-extrabold text-white mb-5 leading-tight">
-              Ready to Blitz your
+              Ready to Foundry your
               <br />
               <span className="text-blue-accent">job search?</span>
             </h2>

@@ -14,12 +14,12 @@ const jakarta = Plus_Jakarta_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'JobBlitz — Apply to 100+ Jobs Daily, Automatically',
+  title: 'JobsFoundry — Apply to 100+ Jobs Daily, Automatically',
   description:
-    'JobBlitz automates your job applications across 500,000+ company career pages. Set your preferences once and let AI land you more interviews.',
+    'JobsFoundry automates your job applications across 500,000+ company career pages. Set your preferences once and let AI land you more interviews.',
   keywords: ['job search', 'auto apply', 'job automation', 'AI job search', 'job applications'],
   openGraph: {
-    title: 'JobBlitz — Apply to 100+ Jobs Daily, Automatically',
+    title: 'JobsFoundry — Apply to 100+ Jobs Daily, Automatically',
     description: 'Automate your job search with AI. Get 3x more interviews.',
     type: 'website',
   },

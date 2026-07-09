@@ -37,6 +37,7 @@ export default function ApplyUserModal({ jobId, jobTitle, onClose }: Props) {
   const { data: usersData, isLoading: usersLoading } = useAdminUsers({
     search: debouncedSearch || undefined,
     limit: 30,
+    role: 'MEMBER',
   })
 
   const { data: fullProfile, isLoading: profileLoading } = useAdminUser(selectedUser?.id ?? '')

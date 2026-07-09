@@ -6,19 +6,19 @@ import { CheckIcon, XMarkIcon } from '@heroicons/react/24/solid'
 import Link from 'next/link'
 
 const ROWS = [
-  { feature: 'Works on ALL ATS systems (Workday, iCIMS, Taleo…)', solo: false, aiAutoApply: false, staffing: false, jobblitz: true },
-  { feature: 'Fully personalized applications', solo: true, aiAutoApply: false, staffing: false, jobblitz: true },
-  { feature: 'Consistent & reliable every day', solo: false, aiAutoApply: true, staffing: false, jobblitz: true },
-  { feature: 'AI resume tailoring per role', solo: false, aiAutoApply: false, staffing: false, jobblitz: true },
-  { feature: 'Recruiter email outreach', solo: false, aiAutoApply: false, staffing: false, jobblitz: true },
-  { feature: 'Proof of every application', solo: false, aiAutoApply: false, staffing: false, jobblitz: true },
-  { feature: 'Better use of your time', solo: false, aiAutoApply: true, staffing: false, jobblitz: true },
-  { feature: 'Affordable pricing', solo: true, aiAutoApply: true, staffing: false, jobblitz: true },
+  { feature: 'Works on ALL ATS systems (Workday, iCIMS, Taleo…)', solo: false, aiAutoApply: false, staffing: false, jobsfoundry: true },
+  { feature: 'Fully personalized applications', solo: true, aiAutoApply: false, staffing: false, jobsfoundry: true },
+  { feature: 'Consistent & reliable every day', solo: false, aiAutoApply: true, staffing: false, jobsfoundry: true },
+  { feature: 'AI resume tailoring per role', solo: false, aiAutoApply: false, staffing: false, jobsfoundry: true },
+  { feature: 'Recruiter email outreach', solo: false, aiAutoApply: false, staffing: false, jobsfoundry: true },
+  { feature: 'Proof of every application', solo: false, aiAutoApply: false, staffing: false, jobsfoundry: true },
+  { feature: 'Better use of your time', solo: false, aiAutoApply: true, staffing: false, jobsfoundry: true },
+  { feature: 'Affordable pricing', solo: true, aiAutoApply: true, staffing: false, jobsfoundry: true },
 ]
 
-function Cell({ value, isJobBlitz }: { value: boolean; isJobBlitz?: boolean }) {
+function Cell({ value, isJobsFoundry }: { value: boolean; isJobsFoundry?: boolean }) {
   if (value === true)
-    return <CheckIcon className={`w-5 h-5 mx-auto ${isJobBlitz ? 'text-navy' : 'text-emerald-500'}`} />
+    return <CheckIcon className={`w-5 h-5 mx-auto ${isJobsFoundry ? 'text-navy' : 'text-emerald-500'}`} />
   return <XMarkIcon className="w-5 h-5 mx-auto text-red-500" />
 }
 
@@ -26,7 +26,7 @@ const VERDICTS = [
   { label: 'Solo', verdict: 'Soul-crushing', emoji: '😵', sub: 'Burnout guaranteed', dark: false },
   { label: 'AI Auto-Apply', verdict: 'Misses 60% of roles', emoji: '🐍', sub: 'ATS limitations', dark: false },
   { label: 'Staffing Firms', verdict: '20% salary gone', emoji: '💀', sub: 'Expensive & slow', dark: false },
-  { label: 'JobBlitz', verdict: 'Your true wingman', emoji: '🚀', sub: 'Smart + affordable', dark: true },
+  { label: 'JobsFoundry', verdict: 'Your true wingman', emoji: '🚀', sub: 'Smart + affordable', dark: true },
 ]
 
 export default function Comparison() {
@@ -43,7 +43,7 @@ export default function Comparison() {
             Let&apos;s see how we compare
           </h2>
           <p className="text-slate-700 max-w-xl mx-auto font-medium">
-            See why JobBlitz outperforms solo job hunting, AI auto-apply tools, and traditional staffing firms.
+            See why JobsFoundry outperforms solo job hunting, AI auto-apply tools, and traditional staffing firms.
           </p>
         </div>
 
@@ -63,7 +63,7 @@ export default function Comparison() {
                 <th className="text-center py-4 px-5 bg-slate-100 text-slate-800 font-bold">AI Auto-Apply</th>
                 <th className="text-center py-4 px-5 bg-slate-100 text-slate-800 font-bold">Staffing Firms</th>
                 <th className="text-center py-4 px-5 bg-blue-accent text-navy font-bold">
-                  JobBlitz ⚡
+                  JobsFoundry ⚡
                 </th>
               </tr>
             </thead>
@@ -80,7 +80,7 @@ export default function Comparison() {
                   <td className="py-3.5 px-5 text-center"><Cell value={row.aiAutoApply} /></td>
                   <td className="py-3.5 px-5 text-center"><Cell value={row.staffing} /></td>
                   <td className="py-3.5 px-5 text-center bg-blue-muted/30">
-                    <Cell value={row.jobblitz} isJobBlitz />
+                    <Cell value={row.jobsfoundry} isJobsFoundry />
                   </td>
                 </tr>
               ))}

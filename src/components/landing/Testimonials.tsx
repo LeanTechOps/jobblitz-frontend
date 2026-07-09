@@ -11,7 +11,7 @@ const TESTIMONIALS = [
     company: 'Joined Stripe',
     avatar: 'https://i.pravatar.cc/80?img=47',
     stars: 5,
-    text: "I applied to over 200 jobs in two weeks without touching a single form. Got 8 interviews and landed my dream role. JobBlitz is genuinely life-changing.",
+    text: "I applied to over 200 jobs in two weeks without touching a single form. Got 8 interviews and landed my dream role. JobsFoundry is genuinely life-changing.",
     border: 'border-violet-400/30 hover:border-violet-400/60',
   },
   {
@@ -20,7 +20,7 @@ const TESTIMONIALS = [
     company: 'Joined Notion',
     avatar: 'https://i.pravatar.cc/80?img=11',
     stars: 5,
-    text: "After 3 months of manual applications with no results, I tried JobBlitz. Within the first week I had 5 interview calls scheduled. The AI resume tailoring is next-level.",
+    text: "After 3 months of manual applications with no results, I tried JobsFoundry. Within the first week I had 5 interview calls scheduled. The AI resume tailoring is next-level.",
     border: 'border-blue-400/30 hover:border-blue-400/60',
   },
   {
@@ -38,7 +38,7 @@ const TESTIMONIALS = [
     company: 'Joined Figma',
     avatar: 'https://i.pravatar.cc/80?img=52',
     stars: 5,
-    text: "I was skeptical at first, but the quality of applications JobBlitz sends is really impressive. Every cover letter felt personalised, not generic.",
+    text: "I was skeptical at first, but the quality of applications JobsFoundry sends is really impressive. Every cover letter felt personalised, not generic.",
     border: 'border-emerald-400/30 hover:border-emerald-400/60',
   },
   {
@@ -47,7 +47,7 @@ const TESTIMONIALS = [
     company: 'Joined HubSpot',
     avatar: 'https://i.pravatar.cc/80?img=33',
     stars: 4,
-    text: "I had been searching for 4 months. Two weeks on JobBlitz and I had 3 offers. The recruiter outreach feature found contacts I would never have found on my own.",
+    text: "I had been searching for 4 months. Two weeks on JobsFoundry and I had 3 offers. The recruiter outreach feature found contacts I would never have found on my own.",
     border: 'border-amber-400/30 hover:border-amber-400/60',
   },
   {
@@ -87,7 +87,7 @@ export default function Testimonials() {
             What job seekers are saying
           </h2>
           <p className="text-blue-200 max-w-xl mx-auto mb-6">
-            Thousands of professionals have used JobBlitz to find their next role faster.
+            Thousands of professionals have used JobsFoundry to find their next role faster.
           </p>
           <div className="inline-flex items-center gap-3 bg-white/10 border border-white/20 rounded-xl px-5 py-2.5 cursor-default select-none">
             <div className="flex gap-0.5">

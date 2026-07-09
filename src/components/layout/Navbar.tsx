@@ -14,7 +14,11 @@ const NAV_LINKS = [
 
 export default function Navbar() {
   const { isAuthenticated, user, logout, loading } = useAuth()
-  const dashboardHref = user?.role === 'ADMIN' ? '/admin/dashboard' : '/dashboard'
+  const dashboardHref =
+    user?.role === 'ADMIN' ? '/admin/dashboard' :
+    user?.role === 'MANAGER' ? '/manager/dashboard' :
+    user?.role === 'RECRUITER' ? '/recruiter/dashboard' :
+    '/dashboard'
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
 
@@ -40,8 +44,8 @@ export default function Navbar() {
           className="flex items-center gap-1.5 flex-shrink-0 group cursor-pointer"
         >
           <span className="text-xl font-bold tracking-tight">
-            <span className="text-navy group-hover:text-navy-light transition-colors duration-150">Job</span>
-            <span className="text-navy group-hover:text-navy-light transition-colors duration-150">Blitz</span>
+            <span className="text-navy group-hover:text-navy-light transition-colors duration-150">Jobs</span>
+            <span className="text-navy group-hover:text-navy-light transition-colors duration-150">Foundry</span>
           </span>
         </Link>
 

@@ -19,10 +19,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (isUnauthenticated) router.replace('/login')
   }, [isUnauthenticated, router])
 
-  // Unauthorized (logged in but not admin) → countdown → dashboard
+  // Unauthorized (logged in but not admin) → countdown → their own dashboard
   useEffect(() => {
     if (!isUnauthorized) return
-    if (countdown <= 0) { router.replace('/dashboard'); return }
+    const dest = user?.role === 'MANAGER' ? '/manager/dashboard'
+      : user?.role === 'RECRUITER' ? '/recruiter/dashboard'
+      : '/dashboard'
+    if (countdown <= 0) { router.replace(dest); return }
     const t = setTimeout(() => setCountdown((c) => c - 1), 1000)
     return () => clearTimeout(t)
   }, [isUnauthorized, countdown, router])

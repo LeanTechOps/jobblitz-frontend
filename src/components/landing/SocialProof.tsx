@@ -28,7 +28,7 @@ export default function SocialProof() {
               &ldquo;You should{' '}
               <span className="bg-blue-accent/20 px-1 rounded">focus on what matters</span>{' '}
               — interview prep and networking.{' '}
-              <span className="bg-blue-accent/20 px-1 rounded">Let JobBlitz handle the rest</span>.&rdquo;
+              <span className="bg-blue-accent/20 px-1 rounded">Let JobsFoundry handle the rest</span>.&rdquo;
             </blockquote>
 
             {/* Author */}
@@ -37,7 +37,7 @@ export default function SocialProof() {
                 <span className="text-sm font-black text-blue-accent select-none">JB</span>
               </div>
               <div>
-                <p className="text-sm font-bold text-navy">The JobBlitz Team</p>
+                <p className="text-sm font-bold text-navy">The JobsFoundry Team</p>
                 <p className="text-xs text-slate-500">Founders &amp; Product Team</p>
               </div>
             </div>

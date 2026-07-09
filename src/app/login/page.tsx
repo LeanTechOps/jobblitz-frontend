@@ -38,8 +38,15 @@ const PLAN_CONTEXT: Record<string, { badge: string; heading: string; sub: string
   },
 }
 
+function roleToDashboard(role?: string) {
+  if (role === 'ADMIN') return '/admin/dashboard'
+  if (role === 'MANAGER') return '/manager/dashboard'
+  if (role === 'RECRUITER') return '/recruiter/dashboard'
+  return '/dashboard'
+}
+
 function LoginPageInner() {
-  const { isAuthenticated, loading } = useAuth()
+  const { user, isAuthenticated, loading } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
   const authError = searchParams.get('error')
@@ -48,9 +55,9 @@ function LoginPageInner() {
 
   useEffect(() => {
     if (!loading && isAuthenticated) {
-      router.replace('/dashboard')
+      router.replace(roleToDashboard(user?.role))
     }
-  }, [isAuthenticated, loading, router])
+  }, [isAuthenticated, loading, user?.role, router])
 
   const handleGoogleLogin = () => {
     window.location.href = `${API_URL}/auth/google`
@@ -71,7 +78,7 @@ function LoginPageInner() {
         {/* Logo */}
         <Link href="/" className="group cursor-pointer">
           <span className="text-xl font-bold text-white">
-            Job<span className="text-blue-accent">Blitz</span>
+            Jobs<span className="text-blue-accent">Foundry</span>
           </span>
         </Link>
 
@@ -115,7 +122,7 @@ function LoginPageInner() {
         <blockquote className="border-l-2 border-blue-accent/60 pl-5">
           <p className="text-white/80 text-sm italic leading-relaxed">
             &ldquo;I went from zero callbacks to 8 interviews in two weeks.
-            JobBlitz completely changed my job search.&rdquo;
+            JobsFoundry completely changed my job search.&rdquo;
           </p>
           <footer className="mt-3 flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-blue-accent/20 text-white text-xs font-bold flex items-center justify-center">
@@ -136,8 +143,8 @@ function LoginPageInner() {
         <div className="lg:hidden mb-10">
           <Link href="/" className="group cursor-pointer">
             <span className="text-2xl font-bold">
-              <span className="text-navy">Job</span>
-              <span className="text-navy">Blitz</span>
+              <span className="text-navy">Jobs</span>
+              <span className="text-navy">Foundry</span>
             </span>
           </Link>
         </div>
@@ -152,7 +159,7 @@ function LoginPageInner() {
               </span>
             )}
             <h1 className="text-2xl font-extrabold text-navy mb-2">
-              {planCtx ? planCtx.heading : 'Welcome to JobBlitz'}
+              {planCtx ? planCtx.heading : 'Welcome to JobsFoundry'}
             </h1>
             <p className="text-slate-600 text-base">
               {planCtx ? planCtx.sub : 'Sign in to start automating your job search — it\'s free.'}

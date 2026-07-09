@@ -307,7 +307,7 @@ export default function PricingPage() {
               Questions?{' '}
               <Link href="/#faq" className="text-navy font-semibold hover:underline">See the FAQ</Link>
               {' '}or email{' '}
-              <a href="mailto:hello@jobblitz.ai" className="text-navy font-semibold hover:underline">hello@jobblitz.ai</a>
+              <a href="mailto:hello@jobsfoundry.ai" className="text-navy font-semibold hover:underline">hello@jobsfoundry.ai</a>
             </p>
           </div>
 

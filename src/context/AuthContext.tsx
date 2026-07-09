@@ -17,7 +17,7 @@ interface User {
   firstName: string | null
   lastName: string | null
   avatar: string | null
-  role: 'MEMBER' | 'ADMIN'
+  role: 'MEMBER' | 'MANAGER' | 'RECRUITER' | 'ADMIN'
 }
 
 interface Subscription {

@@ -2,9 +2,17 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAdminUsers, useAdminSkills } from '@/hooks/useAdmin'
+import { useAdminUsers, useAdminSkills, useUpdateUserRole, ALL_ROLES, ROLE_LABELS, type UserRole } from '@/hooks/useAdmin'
 import { useDebounce } from '@/hooks/useDebounce'
 import { MagnifyingGlassIcon, ChevronRightIcon, XMarkIcon, FunnelIcon } from '@heroicons/react/24/outline'
+import { toast } from 'react-toastify'
+
+const ROLE_PILL: Record<string, string> = {
+  MEMBER: 'bg-blue-muted text-navy font-semibold',
+  MANAGER: 'bg-emerald-100 text-emerald-800 font-semibold',
+  RECRUITER: 'bg-peach/30 text-navy font-semibold',
+  ADMIN: 'bg-navy text-blue-accent font-bold',
+}
 
 const PLAN_PILL: Record<string, string> = {
   FREE: 'bg-navy/10 text-navy',
@@ -128,6 +136,54 @@ function SkillsModal({
   )
 }
 
+function RoleBadge({ userId, currentRole }: { userId: string; currentRole: string }) {
+  const [open, setOpen] = useState(false)
+  const { mutate: updateRole, isPending } = useUpdateUserRole()
+
+  const handleChange = (role: UserRole) => {
+    if (role === currentRole) { setOpen(false); return }
+    updateRole(
+      { userId, role },
+      {
+        onSuccess: () => toast.success(`Role changed to ${ROLE_LABELS[role]}`),
+        onError: () => toast.error('Failed to update role'),
+        onSettled: () => setOpen(false),
+      }
+    )
+  }
+
+  return (
+    <div className="relative flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+      {/* Role label pill */}
+      <span className={`text-xs px-2.5 py-1 rounded-full ${ROLE_PILL[currentRole] ?? 'bg-blue-muted text-navy font-semibold'} ${isPending ? 'opacity-50' : ''}`}>
+        {ROLE_LABELS[currentRole as UserRole] ?? currentRole}
+      </span>
+      {/* Change button — solid, always visible */}
+      <button
+        onClick={() => setOpen((v) => !v)}
+        disabled={isPending}
+        className="text-[11px] font-bold text-navy bg-blue-muted hover:bg-blue-accent/30 border border-navy/30 hover:border-navy px-2.5 py-1 rounded-lg cursor-pointer transition-all disabled:opacity-50"
+      >
+        {isPending ? '…' : 'Change'}
+      </button>
+      {open && (
+        <div className="absolute top-full left-0 mt-1 z-50 bg-white border border-navy/15 rounded-xl shadow-xl min-w-40 py-1">
+          {ALL_ROLES.map((r) => (
+            <button
+              key={r}
+              onClick={() => handleChange(r)}
+              className={`w-full text-left px-4 py-2.5 text-sm font-medium transition-colors cursor-pointer hover:bg-section-alt flex items-center gap-2 ${r === currentRole ? 'text-blue-accent bg-navy' : 'text-navy'}`}
+            >
+              <span className={`w-2 h-2 rounded-full shrink-0 ${r === currentRole ? 'bg-blue-accent' : 'bg-transparent border border-navy/30'}`} />
+              {ROLE_LABELS[r]}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function AdminUsersPage() {
   const router = useRouter()
   const [page, setPage] = useState(1)
@@ -245,6 +301,7 @@ export default function AdminUsersPage() {
                 <th className="text-left px-4 py-3.5 text-xs font-bold text-navy/50 uppercase tracking-wide hidden md:table-cell">Skills</th>
                 <th className="text-left px-4 py-3.5 text-xs font-bold text-navy/50 uppercase tracking-wide hidden lg:table-cell">Visa</th>
                 <th className="text-left px-4 py-3.5 text-xs font-bold text-navy/50 uppercase tracking-wide">Plan</th>
+                <th className="text-left px-4 py-3.5 text-xs font-bold text-navy/50 uppercase tracking-wide hidden sm:table-cell">Role</th>
                 <th className="text-left px-4 py-3.5 text-xs font-bold text-navy/50 uppercase tracking-wide hidden sm:table-cell">Resumes</th>
                 <th className="px-5 py-3.5" />
               </tr>
@@ -302,6 +359,10 @@ export default function AdminUsersPage() {
                         {u.subscription.plan.replace('_', ' ')}
                       </span>
                     ) : <span className="text-navy/25 text-xs">—</span>}
+                  </td>
+
+                  <td className="px-4 py-4 hidden sm:table-cell">
+                    <RoleBadge userId={u.id} currentRole={u.role} />
                   </td>
 
                   <td className="px-4 py-4 hidden sm:table-cell text-xs font-medium text-navy/60">

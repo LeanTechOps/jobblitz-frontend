@@ -24,6 +24,8 @@ const SALARY_PERIODS: { value: string; label: string }[] = [
 interface JobFormProps {
   initialData?: Partial<JobFormData>
   jobId?: string
+  /** Path to return to after save/cancel. Defaults to /admin/jobs */
+  jobsListPath?: string
 }
 
 interface JobFormData {
@@ -107,7 +109,7 @@ const inputCls =
 const selectCls = `${inputCls} cursor-pointer`
 const textareaCls = `${inputCls} resize-y min-h-28 leading-relaxed`
 
-export default function JobForm({ initialData, jobId }: JobFormProps) {
+export default function JobForm({ initialData, jobId, jobsListPath = '/admin/jobs' }: JobFormProps) {
   const router = useRouter()
   const [form, setForm] = useState<JobFormData>({ ...DEFAULT, ...initialData })
   const [skillInput, setSkillInput] = useState('')
@@ -203,7 +205,7 @@ export default function JobForm({ initialData, jobId }: JobFormProps) {
         }
         toast.success('Job created')
       }
-      router.push('/admin/jobs')
+      router.push(jobsListPath)
     } catch {
       toast.error('Failed to save job')
     }
@@ -425,7 +427,7 @@ export default function JobForm({ initialData, jobId }: JobFormProps) {
       <div className="flex items-center justify-end gap-3 pt-2 pb-8">
         <button
           type="button"
-          onClick={() => router.push('/admin/jobs')}
+          onClick={() => router.push(jobsListPath)}
           className="px-5 py-2.5 text-sm font-semibold border-2 border-slate-200 rounded-xl text-slate-600 hover:border-navy/30 hover:bg-section-alt transition-all duration-150 cursor-pointer"
         >
           Cancel

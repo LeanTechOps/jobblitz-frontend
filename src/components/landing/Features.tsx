@@ -86,7 +86,7 @@ export default function Features() {
             Everything you need to land your dream job
           </h2>
           <p className="text-slate-700 max-w-xl mx-auto font-medium">
-            Stop spending hours on repetitive applications. JobBlitz gives you an unfair advantage
+            Stop spending hours on repetitive applications. JobsFoundry gives you an unfair advantage
             in your job search.
           </p>
         </div>

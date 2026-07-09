@@ -1,8 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
-import { useAdminUser, useAdminResumeUrl } from '@/hooks/useAdmin'
+import { useAdminUser, useAdminResumeUrl, useUpdateUserRole, ALL_ROLES, ROLE_LABELS, type UserRole } from '@/hooks/useAdmin'
 import { toast } from 'react-toastify'
 import {
   ChevronLeftIcon,
@@ -69,9 +70,18 @@ function ResumeDownloadButton({ resumeId, fileName }: { resumeId: string; fileNa
   )
 }
 
+const ROLE_PILL: Record<string, string> = {
+  MEMBER: 'bg-blue-muted text-navy font-semibold',
+  MANAGER: 'bg-emerald-100 text-emerald-800 font-semibold',
+  RECRUITER: 'bg-peach/30 text-navy font-semibold',
+  ADMIN: 'bg-navy text-blue-accent font-bold',
+}
+
 export default function AdminUserProfilePage() {
   const { id } = useParams<{ id: string }>()
   const { data: user, isLoading } = useAdminUser(id)
+  const { mutate: updateRole, isPending: roleUpdating } = useUpdateUserRole()
+  const [roleOpen, setRoleOpen] = useState(false)
 
   if (isLoading) {
     return (
@@ -117,14 +127,51 @@ export default function AdminUserProfilePage() {
                 <MapPinIcon className="w-3.5 h-3.5 text-peach" /> {p.location}
               </p>
             )}
+            {/* Role + plan pills */}
             <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
-              <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${user.role === 'ADMIN' ? 'bg-blue-accent text-navy' : 'bg-slate-200 text-slate-700'}`}>
-                {user.role}
+              <span className={`text-xs px-2.5 py-1 rounded-full ${ROLE_PILL[user.role] ?? 'bg-blue-muted text-navy font-semibold'}`}>
+                {ROLE_LABELS[user.role as UserRole] ?? user.role}
               </span>
               {user.subscription && (
                 <span className={`text-xs px-2.5 py-1 rounded-full ${PLAN_PILL[user.subscription.plan] ?? 'bg-slate-200 text-slate-700 font-semibold'}`}>
                   {user.subscription.plan.replace('_', ' ')}
                 </span>
+              )}
+            </div>
+
+            {/* Change role */}
+            <div className="mt-4 relative flex justify-center">
+              <button
+                onClick={() => setRoleOpen((v) => !v)}
+                disabled={roleUpdating}
+                className="flex items-center gap-1.5 text-xs font-semibold text-navy border border-navy/25 hover:border-navy/60 bg-section-alt hover:bg-blue-muted px-3 py-1.5 rounded-xl cursor-pointer transition-all disabled:opacity-50"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+                {roleUpdating ? 'Updating…' : 'Change role'}
+              </button>
+              {roleOpen && (
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 z-50 bg-white border border-navy/15 rounded-xl shadow-xl min-w-44 py-1">
+                  {ALL_ROLES.map((r) => (
+                    <button
+                      key={r}
+                      onClick={() => {
+                        if (r !== user.role) {
+                          updateRole({ userId: id, role: r as UserRole }, {
+                            onSuccess: () => toast.success(`Role updated to ${ROLE_LABELS[r as UserRole]}`),
+                            onError: () => toast.error('Failed to update role'),
+                          })
+                        }
+                        setRoleOpen(false)
+                      }}
+                      className={`w-full text-left px-4 py-2.5 text-sm font-medium transition-colors cursor-pointer hover:bg-section-alt flex items-center gap-2.5 ${r === user.role ? 'bg-navy text-blue-accent' : 'text-navy'}`}
+                    >
+                      <span className={`w-2 h-2 rounded-full shrink-0 ${r === user.role ? 'bg-blue-accent' : 'bg-transparent border border-navy/30'}`} />
+                      {ROLE_LABELS[r as UserRole]}
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
           </div>

@@ -134,7 +134,7 @@ export default function ProfilePage() {
             </Link>
             <div className="h-5 w-px bg-slate-200" />
             <Link href="/" className="cursor-pointer">
-              <span className="text-xl font-bold text-navy">JobBlitz</span>
+              <span className="text-xl font-bold text-navy">JobsFoundry</span>
             </Link>
           </div>
           <button

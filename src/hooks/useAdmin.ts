@@ -1,5 +1,15 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/lib/api'
+
+export const ALL_ROLES = ['MEMBER', 'MANAGER', 'RECRUITER', 'ADMIN'] as const
+export type UserRole = typeof ALL_ROLES[number]
+
+export const ROLE_LABELS: Record<UserRole, string> = {
+  MEMBER: 'Job Seeker',
+  MANAGER: 'Manager',
+  RECRUITER: 'Recruiter',
+  ADMIN: 'Admin',
+}
 
 // ── Dashboard ──────────────────────────────────────────────
 
@@ -76,6 +86,7 @@ export interface UserFilters {
   skills?: string[]
   visaType?: string
   plan?: string
+  role?: UserRole
 }
 
 function buildParams(filters: UserFilters) {
@@ -86,6 +97,7 @@ function buildParams(filters: UserFilters) {
   filters.skills?.forEach((s) => p.append('skills', s))
   if (filters.visaType) p.set('visaType', filters.visaType)
   if (filters.plan) p.set('plan', filters.plan)
+  if (filters.role) p.set('role', filters.role)
   return p.toString()
 }
 
@@ -145,5 +157,17 @@ export function useAdminUser(id: string) {
     queryKey: ['admin', 'users', id],
     queryFn: () => api.get<AdminUserProfile>(`/admin/users/${id}`),
     enabled: !!id,
+  })
+}
+
+export function useUpdateUserRole() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ userId, role }: { userId: string; role: UserRole }) =>
+      api.patch(`/admin/users/${userId}/role`, { role }),
+    onSuccess: (_data, { userId }) => {
+      qc.invalidateQueries({ queryKey: ['admin', 'users'] })
+      qc.invalidateQueries({ queryKey: ['admin', 'users', userId] })
+    },
   })
 }

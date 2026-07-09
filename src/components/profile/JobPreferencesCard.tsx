@@ -15,7 +15,7 @@ export default function JobPreferencesCard() {
             <h2 className="text-xl font-bold text-navy">Job Preferences</h2>
             <p className="text-sm text-slate-600 mt-1 max-w-lg leading-relaxed">
               Set your target roles, preferred locations, salary range and work type.
-              JobBlitz uses these to auto-apply to your best-matched jobs.
+              JobsFoundry uses these to auto-apply to your best-matched jobs.
             </p>
           </div>
           <span className="flex-shrink-0 text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full bg-slate-100 text-slate-500">

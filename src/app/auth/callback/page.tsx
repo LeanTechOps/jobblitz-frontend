@@ -54,11 +54,12 @@ function AuthCallbackInner() {
   // Once user is loaded, redirect based on role
   useEffect(() => {
     if (!user) return
-    if (user.role === 'ADMIN') {
-      router.replace('/admin/dashboard')
-    } else {
-      router.replace('/dashboard')
-    }
+    const dest =
+      user.role === 'ADMIN' ? '/admin/dashboard' :
+      user.role === 'MANAGER' ? '/manager/dashboard' :
+      user.role === 'RECRUITER' ? '/recruiter/dashboard' :
+      '/dashboard'
+    router.replace(dest)
   }, [user, router])
 
   // If there's an error param, show a brief error state while redirecting
@@ -66,7 +67,7 @@ function AuthCallbackInner() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
         <div className="mb-10">
-          <span className="text-2xl font-bold text-navy">JobBlitz</span>
+          <span className="text-2xl font-bold text-navy">JobsFoundry</span>
         </div>
         <div className="w-full max-w-sm bg-white border border-red-100 rounded-2xl shadow-lg p-8 text-center">
           <div className="flex items-center justify-center mb-6">
@@ -85,7 +86,7 @@ function AuthCallbackInner() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
       <div className="mb-10">
-        <span className="text-2xl font-bold text-navy">JobBlitz</span>
+        <span className="text-2xl font-bold text-navy">JobsFoundry</span>
       </div>
 
       <div className="w-full max-w-sm bg-white border border-slate-100 rounded-2xl shadow-lg p-8 text-center">
