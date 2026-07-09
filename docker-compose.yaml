@@ -1,6 +1,6 @@
 services:
   app:
-    image: ${IMAGE_NAME}
+    image: ghcr.io/leantechops/jobsfoundry-frontend:main
     ports:
       - "54000:4000"
     restart: always

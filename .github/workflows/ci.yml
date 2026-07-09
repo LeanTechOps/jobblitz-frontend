@@ -41,15 +41,6 @@ jobs:
             type=sha,prefix={{branch}}-
             type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: Set build script based on branch
-        id: build-script
-        run: |
-          if [ "${{ github.ref_name }}" == "main" ]; then
-            echo "BUILD_SCRIPT=build:prod" >> $GITHUB_OUTPUT
-          else
-            echo "BUILD_SCRIPT=build:qa" >> $GITHUB_OUTPUT
-          fi
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
@@ -57,7 +48,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            BUILD_SCRIPT=${{ steps.build-script.outputs.BUILD_SCRIPT }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

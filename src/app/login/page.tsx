@@ -78,7 +78,7 @@ function LoginPageInner() {
       <div className="hidden lg:flex lg:w-1/2 bg-navy flex-col justify-between px-12 py-10">
         {/* Logo */}
         <Link href="/" className="cursor-pointer">
-          <Logo height={36} className="brightness-0 invert" />
+          <Logo height={62} className="brightness-0 invert" />
         </Link>
 
         {/* Middle */}
@@ -141,7 +141,7 @@ function LoginPageInner() {
         {/* Mobile logo */}
         <div className="lg:hidden mb-10">
           <Link href="/" className="cursor-pointer">
-            <Logo height={34} />
+            <Logo height={60} />
           </Link>
         </div>
 

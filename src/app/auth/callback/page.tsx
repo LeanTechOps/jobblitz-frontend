@@ -68,7 +68,7 @@ function AuthCallbackInner() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
         <div className="mb-10">
-          <span className="text-2xl font-bold text-navy">JobsFoundry</span>
+          <Logo height={60} />
         </div>
         <div className="w-full max-w-sm bg-white border border-red-100 rounded-2xl shadow-lg p-8 text-center">
           <div className="flex items-center justify-center mb-6">
@@ -87,7 +87,7 @@ function AuthCallbackInner() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-white px-4">
       <div className="mb-10">
-        <span className="text-2xl font-bold text-navy">JobsFoundry</span>
+        <Logo height={60} />
       </div>
 
       <div className="w-full max-w-sm bg-white border border-slate-100 rounded-2xl shadow-lg p-8 text-center">

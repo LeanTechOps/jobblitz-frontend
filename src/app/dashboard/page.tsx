@@ -10,6 +10,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { useMyApplications } from '@/hooks/useApplications'
 import ApplicationCard from '@/components/dashboard/ApplicationCard'
+import Logo from '@/components/Logo'
 
 const PLAN_BADGE_COLOR: Record<string, string> = {
   FREE:     'bg-slate-100 text-slate-700',
@@ -52,8 +53,8 @@ export default function DashboardPage() {
       {/* Topbar */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="group cursor-pointer">
-            <span className="text-xl font-bold text-navy group-hover:text-navy-light transition-colors duration-150">JobsFoundry</span>
+          <Link href="/" className="cursor-pointer">
+            <Logo height={56} />
           </Link>
           <div className="flex items-center gap-4">
             {subscription !== null ? (

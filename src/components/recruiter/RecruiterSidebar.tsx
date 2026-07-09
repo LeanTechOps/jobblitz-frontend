@@ -32,7 +32,7 @@ export default function RecruiterSidebar() {
     <aside className="flex flex-col w-60 min-h-screen bg-navy shrink-0">
       <div className="px-6 py-5 border-b border-white/10">
         <div className="flex items-center gap-2">
-          <Logo height={28} className="brightness-0 invert" />
+          <Logo height={52} className="brightness-0 invert" />
           <span className="text-[9px] font-bold bg-peach text-navy px-1.5 py-0.5 rounded-full leading-none tracking-tight">
             REC
           </span>

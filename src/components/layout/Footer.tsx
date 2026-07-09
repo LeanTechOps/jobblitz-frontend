@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Logo from '@/components/Logo'
 
 const FOOTER_LINKS = {
   Product: [
@@ -24,10 +25,8 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="inline-block mb-4 group cursor-pointer">
-              <span className="text-xl font-bold">
-                <span className="text-white group-hover:text-blue-accent transition-colors duration-150">JobsFoundry</span>
-              </span>
+            <Link href="/" className="inline-block mb-4 cursor-pointer">
+              <Logo height={58} className="brightness-0 invert" />
             </Link>
             <p className="text-slate-300 text-sm leading-relaxed max-w-xs">
               Automate your job applications with AI. Land more interviews, faster.

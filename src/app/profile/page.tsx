@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useAuth } from '@/context/AuthContext'
 import { useProfile, useUpdateProfile, useResumes, useDeleteResume, useSetDefaultResume, useUploadResume } from '@/hooks/useProfile'
 import { toast } from 'react-toastify'
+import Logo from '@/components/Logo'
 import { CheckCircleIcon, ArrowLeftIcon } from '@heroicons/react/24/outline'
 
 import ProfileHero from '@/components/profile/ProfileHero'
@@ -134,7 +135,7 @@ export default function ProfilePage() {
             </Link>
             <div className="h-5 w-px bg-slate-200" />
             <Link href="/" className="cursor-pointer">
-              <span className="text-xl font-bold text-navy">JobsFoundry</span>
+              <Logo height={52} />
             </Link>
           </div>
           <button
