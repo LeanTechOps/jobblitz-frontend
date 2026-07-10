@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
 import AdminSidebar from '@/components/admin/AdminSidebar'
-import { ShieldExclamationIcon } from '@heroicons/react/24/outline'
+import { ShieldExclamationIcon, Bars3Icon } from '@heroicons/react/24/outline'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
   const router = useRouter()
   const [countdown, setCountdown] = useState(5)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const isUnauthorized = !loading && user && user.role !== 'ADMIN'
   const isUnauthenticated = !loading && !user
@@ -65,8 +66,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="flex min-h-screen bg-section-alt">
-      <AdminSidebar />
-      <main className="flex-1 overflow-auto">{children}</main>
+      <AdminSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <div className="flex-1 flex flex-col overflow-auto">
+        {/* Mobile top bar */}
+        <div className="md:hidden sticky top-0 z-30 flex items-center gap-3 px-4 py-3 bg-white border-b border-slate-100">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="text-navy cursor-pointer"
+          >
+            <Bars3Icon className="w-6 h-6" />
+          </button>
+          <span className="text-sm font-semibold text-navy">Admin Portal</span>
+        </div>
+        <main className="flex-1">{children}</main>
+      </div>
     </div>
   )
 }
