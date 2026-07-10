@@ -13,10 +13,19 @@ interface Props {
 export default function SkillsCard({ skills, onChange }: Props) {
   const [input, setInput] = useState('')
 
-  const add = () => {
-    const s = normaliseSkill(input)
+  const add = (raw = input) => {
+    const s = normaliseSkill(raw)
     if (s && !skills.includes(s)) onChange([...skills, s])
     setInput('')
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    if (val.endsWith(',')) {
+      add(val.slice(0, -1))
+    } else {
+      setInput(val)
+    }
   }
 
   const remove = (s: string) => onChange(skills.filter((x) => x !== s))
@@ -33,14 +42,14 @@ export default function SkillsCard({ skills, onChange }: Props) {
         <div className="flex gap-2">
           <input
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={handleChange}
             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); add() } }}
             placeholder="e.g. React, NestJS, Figma…"
             className="flex-1 px-4 py-3 rounded-xl text-base border-2 border-slate-200 text-navy font-medium placeholder:text-slate-300 hover:border-slate-300 focus:border-navy focus:ring-4 focus:ring-navy/10 outline-none transition-all cursor-text"
           />
           <button
             type="button"
-            onClick={add}
+            onClick={() => add()}
             className="px-5 py-3 bg-blue-muted hover:bg-blue-accent/20 text-navy font-bold rounded-xl text-sm transition-colors cursor-pointer"
           >
             Add

@@ -158,7 +158,8 @@ function RoleBadge({ userId, currentRole }: { userId: string; currentRole: strin
       <span className={`text-xs px-2.5 py-1 rounded-full ${ROLE_PILL[currentRole] ?? 'bg-blue-muted text-navy font-semibold'} ${isPending ? 'opacity-50' : ''}`}>
         {ROLE_LABELS[currentRole as UserRole] ?? currentRole}
       </span>
-      {/* Change button — solid, always visible */}
+      {/* Change button — hidden for other admins */}
+      {currentRole !== 'ADMIN' && (
       <button
         onClick={() => setOpen((v) => !v)}
         disabled={isPending}
@@ -166,6 +167,7 @@ function RoleBadge({ userId, currentRole }: { userId: string; currentRole: strin
       >
         {isPending ? '…' : 'Change'}
       </button>
+      )}
       {open && (
         <div className="absolute top-full left-0 mt-1 z-50 bg-white border border-navy/15 rounded-xl shadow-xl min-w-40 py-1">
           {ALL_ROLES.map((r) => (

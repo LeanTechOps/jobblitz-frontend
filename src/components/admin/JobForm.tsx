@@ -161,10 +161,15 @@ export default function JobForm({ initialData, jobId, jobsListPath = '/admin/job
   const set = (field: keyof JobFormData, value: unknown) =>
     setForm((prev) => ({ ...prev, [field]: value }))
 
-  const addSkill = () => {
-    const s = normaliseSkill(skillInput)
+  const addSkill = (raw = skillInput) => {
+    const s = normaliseSkill(raw)
     if (s && !form.skills.includes(s)) set('skills', [...form.skills, s])
     setSkillInput('')
+  }
+
+  const handleSkillChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    if (val.endsWith(',')) { addSkill(val.slice(0, -1)) } else { setSkillInput(val) }
   }
 
   const removeSkill = (s: string) => set('skills', form.skills.filter((x) => x !== s))
@@ -347,13 +352,13 @@ export default function JobForm({ initialData, jobId, jobsListPath = '/admin/job
           <input
             className={`${inputCls} flex-1`}
             value={skillInput}
-            onChange={(e) => setSkillInput(e.target.value)}
+            onChange={handleSkillChange}
             onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addSkill() } }}
-            placeholder="Type a skill and press Enter or Add"
+            placeholder="Type a skill and press Enter or , to add"
           />
           <button
             type="button"
-            onClick={addSkill}
+            onClick={() => addSkill()}
             className="px-4 py-2 bg-blue-muted hover:bg-blue-accent/20 text-navy font-semibold rounded-xl text-sm transition-colors cursor-pointer"
           >
             Add

@@ -139,8 +139,8 @@ export default function AdminUserProfilePage() {
               )}
             </div>
 
-            {/* Change role */}
-            <div className="mt-4 relative flex justify-center">
+            {/* Change role — not shown for other admins */}
+            {user.role !== 'ADMIN' && <div className="mt-4 relative flex justify-center">
               <button
                 onClick={() => setRoleOpen((v) => !v)}
                 disabled={roleUpdating}
@@ -173,7 +173,7 @@ export default function AdminUserProfilePage() {
                   ))}
                 </div>
               )}
-            </div>
+            </div>}
           </div>
 
           {/* Contact */}
