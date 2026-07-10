@@ -51,7 +51,7 @@ const INCLUDED_IN_ALL_PAID = [
 export default function PricingPage() {
   const { isAuthenticated, subscription } = useAuth()
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
-  const currentPlan = (subscription?.plan ?? 'FREE').toLowerCase()
+  const currentPlan = isAuthenticated ? (subscription?.plan ?? 'FREE').toLowerCase() : null
   const currentInterval = subscription?.billingCycle === 'YEARLY' ? 'year' : 'month'
 
   const { data: rawPlans, isLoading: pricesLoading } = useStripePricing()

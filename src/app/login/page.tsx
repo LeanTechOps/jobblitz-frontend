@@ -29,13 +29,13 @@ const PLAN_CONTEXT: Record<string, { badge: string; heading: string; sub: string
   },
   pro: {
     badge: 'Pro Plan',
-    heading: 'Start your Pro plan',
-    sub: 'Sign in to complete your Pro plan setup and get 50 applications/day.',
+    heading: 'Experience Pro — free to start',
+    sub: 'Sign in to try JobsFoundry free. Upgrade to Pro anytime to unlock 50 applications/day.',
   },
   business: {
     badge: 'Business Plan',
-    heading: 'Start your Business plan',
-    sub: 'Sign in to complete your Business plan setup and unlock full power.',
+    heading: 'Experience Business — free to start',
+    sub: 'Sign in to try JobsFoundry free. Upgrade to Business anytime for full power and outreach automation.',
   },
 }
 
