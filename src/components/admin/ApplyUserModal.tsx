@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react'
 import { XMarkIcon, MagnifyingGlassIcon, DocumentIcon, CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { useAdminUsers, useAdminUser, AdminUserRow } from '@/hooks/useAdmin'
-import { useCreateApplication, ApplicationStatus } from '@/hooks/useApplications'
+import { useCreateApplication, useJobApplications, ApplicationStatus } from '@/hooks/useApplications'
 import { useDebounce } from '@/hooks/useDebounce'
 
 interface Props {
@@ -39,6 +39,15 @@ export default function ApplyUserModal({ jobId, jobTitle, onClose }: Props) {
     limit: 30,
     role: 'MEMBER',
   })
+
+  const { data: existingApplications = [] } = useJobApplications(jobId)
+
+  // Build a Set of user IDs already applied to this job
+  const appliedUserIds = new Set(
+    existingApplications.map((application: any) => application.profile?.user?.id).filter(Boolean)
+  )
+
+  const availableUsers = (usersData?.data ?? []).filter((u) => !appliedUserIds.has(u.id))
 
   const { data: fullProfile, isLoading: profileLoading } = useAdminUser(selectedUser?.id ?? '')
   const { mutateAsync: createApplication, isPending } = useCreateApplication()
@@ -132,11 +141,13 @@ export default function ApplyUserModal({ jobId, jobTitle, onClose }: Props) {
 
               {usersLoading ? (
                 <LoadingRows />
-              ) : !usersData?.data?.length ? (
-                <p className="text-center text-sm font-semibold text-[#1a2e1a]/60 py-8">No users found</p>
+              ) : !availableUsers.length ? (
+                <p className="text-center text-sm font-semibold text-[#1a2e1a]/60 py-8">
+                  {usersData?.data?.length ? 'All matching users are already applied to this job' : 'No users found'}
+                </p>
               ) : (
                 <ul className="space-y-2">
-                  {usersData.data.map((user) => (
+                  {availableUsers.map((user) => (
                     <li key={user.id}>
                       <button
                         onClick={() => handleSelectUser(user)}
