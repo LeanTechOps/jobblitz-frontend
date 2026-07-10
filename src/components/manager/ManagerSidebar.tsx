@@ -33,9 +33,6 @@ export default function ManagerSidebar() {
       <div className="px-6 py-5 border-b border-white/10">
         <div className="flex items-center gap-2">
           <Logo height={52} className="brightness-0 invert" />
-          <span className="text-[9px] font-bold bg-blue-accent text-navy px-1.5 py-0.5 rounded-full leading-none tracking-tight">
-            MGR
-          </span>
         </div>
       </div>
 
