@@ -170,7 +170,7 @@ function RoleBadge({ userId, currentRole }: { userId: string; currentRole: strin
       )}
       {open && (
         <div className="absolute top-full left-0 mt-1 z-50 bg-white border border-navy/15 rounded-xl shadow-xl min-w-40 py-1">
-          {ALL_ROLES.map((r) => (
+          {ALL_ROLES.filter(r => r !== 'ADMIN').map((r) => (
             <button
               key={r}
               onClick={() => handleChange(r)}
@@ -288,7 +288,7 @@ export default function AdminUsersPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-navy/10 rounded-2xl overflow-hidden">
+      <div className="bg-white border border-navy/10 rounded-2xl overflow-visible">
         {isLoading ? (
           <div className="flex items-center justify-center h-48">
             <div className="w-7 h-7 rounded-full border-2 border-navy border-t-blue-accent animate-spin" />
@@ -297,7 +297,7 @@ export default function AdminUsersPage() {
           <div className="text-center py-16 text-base font-semibold text-navy">No users match your filters</div>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-section-alt border-b border-navy/8">
+            <thead className="bg-section-alt border-b border-navy/8 [&>tr>th:first-child]:rounded-tl-2xl [&>tr>th:last-child]:rounded-tr-2xl">
               <tr>
                 <th className="text-left px-5 py-3.5 text-xs font-bold text-navy/50 uppercase tracking-wide">User</th>
                 <th className="text-left px-4 py-3.5 text-xs font-bold text-navy/50 uppercase tracking-wide hidden md:table-cell">Skills</th>
