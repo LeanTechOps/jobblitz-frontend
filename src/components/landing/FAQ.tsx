@@ -33,12 +33,12 @@ const FAQS = [
   {
     question: 'Is there a free plan?',
     answer:
-      'Yes — the Free plan gives you 5 auto-applications per day, a basic job tracker, and 1 resume profile. No credit card required to get started.',
+      'Yes — the Forge (Free) plan gives you 1 application per day, a basic job tracker, and 1 resume profile. No credit card required to get started.',
   },
   {
     question: 'Can I cancel my subscription anytime?',
     answer:
-      'Yes — no contracts, no lock-ins. Cancel anytime from your billing settings. You retain access until the end of your current billing period. We also offer a 30-day money-back guarantee on all paid plans.',
+      'Yes — no contracts, no lock-ins. Cancel anytime from your billing settings. You retain access until the end of your current billing period.',
   },
   {
     question: 'Is my resume and personal data safe?',

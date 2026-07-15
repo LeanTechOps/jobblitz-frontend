@@ -85,7 +85,7 @@ export default function Navbar() {
                 Log in
               </Link>
               <Link
-                href="/login?plan=free"
+                href="/login?plan=forge"
                 className="inline-flex items-center gap-1.5 bg-blue-accent hover:bg-blue-accent-hover active:scale-95 text-navy text-sm font-bold px-4 py-2 rounded-lg transition-all duration-150 shadow-sm hover:shadow-md cursor-pointer select-none"
               >
                 Get Started Free
@@ -148,7 +148,7 @@ export default function Navbar() {
                   Log in
                 </Link>
                 <Link
-                  href="/login?plan=free"
+                  href="/login?plan=forge"
                   onClick={() => setMobileOpen(false)}
                   className="bg-blue-accent hover:bg-blue-accent-hover active:scale-95 text-navy text-sm font-bold px-4 py-2.5 rounded-lg text-center transition-all duration-150 cursor-pointer select-none"
                 >

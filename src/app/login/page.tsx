@@ -22,20 +22,25 @@ const STATS = [
 ]
 
 const PLAN_CONTEXT: Record<string, { badge: string; heading: string; sub: string }> = {
-  free: {
-    badge: 'Free Plan',
+  forge: {
+    badge: 'Forge — Free',
     heading: 'Start your free plan',
     sub: 'No credit card required. Start automating your job search in seconds.',
   },
-  pro: {
-    badge: 'Pro Plan',
-    heading: 'Experience Pro — free to start',
-    sub: 'Sign in to try JobsFoundry free. Upgrade to Pro anytime to unlock 50 applications/day.',
+  craft: {
+    badge: 'Craft Plan',
+    heading: 'Choose Craft — free to start',
+    sub: 'Sign in to try JobsFoundry free. Upgrade to Craft anytime for up to 3–5 applications per day.',
   },
-  business: {
-    badge: 'Business Plan',
-    heading: 'Experience Business — free to start',
-    sub: 'Sign in to try JobsFoundry free. Upgrade to Business anytime for full power and outreach automation.',
+  launch: {
+    badge: 'Launch Plan',
+    heading: 'Accelerate your search — free to start',
+    sub: 'Sign in to try JobsFoundry free. Upgrade to Launch for up to 8–10 applications per day.',
+  },
+  momentum: {
+    badge: 'Momentum Plan',
+    heading: 'Get Complete Coverage — free to start',
+    sub: 'Sign in to try JobsFoundry free. Upgrade to Momentum for applications to every eligible job available.',
   },
 }
 

@@ -1,6 +1,6 @@
 /** Shape returned by GET /stripe/pricing */
 export interface ApiPlan {
-  id: string          // 'free' | 'pro' | 'business'
+  id: string          // 'forge' | 'craft' | 'launch' | 'momentum'
   name: string
   price: number
   interval: string    // 'month' | 'year'

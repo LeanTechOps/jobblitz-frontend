@@ -17,10 +17,11 @@ import {
 } from '@heroicons/react/24/outline'
 
 const PLAN_PILL: Record<string, string> = {
-  FREE: 'bg-slate-200 text-slate-800 font-semibold',
-  PRO_FREE: 'bg-blue-muted text-navy font-bold',
-  PRO: 'bg-blue-accent text-navy font-bold',
-  BUSINESS: 'bg-peach/20 text-peach font-bold',
+  FORGE: 'bg-slate-200 text-slate-800 font-semibold',
+  FORGE_FREE: 'bg-amber-50 text-amber-700 font-bold border border-amber-200',
+  CRAFT: 'bg-blue-muted text-navy font-bold',
+  LAUNCH: 'bg-blue-accent text-navy font-bold',
+  MOMENTUM: 'bg-navy text-white font-bold',
 }
 
 const VISA_LABELS: Record<string, string> = {

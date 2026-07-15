@@ -12,46 +12,20 @@ import { CheckCircleIcon } from '@heroicons/react/24/outline'
 interface PlanPriceData {
   monthly?: { price: number; priceId: string }
   annual?: { perMonth: number; total: number; priceId: string }
-}
-
-const PLAN_INCLUDES = {
-  free: [
-    'Up to 5 auto-applications/day',
-    '1 resume profile',
-    'Basic job tracker',
-    'Application status tracking',
-    'No credit card required',
-  ],
-  pro: [
-    'Up to 50 auto-applications/day',
-    '5 resume profiles',
-    'AI resume tailoring per job',
-    'AI cover letter generator',
-    'Full application analytics',
-    'Priority email support',
-  ],
-  business: [
-    'Up to 200 auto-applications/day',
-    'Unlimited resume profiles',
-    'Everything in Pro',
-    'Hiring manager email outreach',
-    'A/B testing for job titles',
-    'Dedicated account support',
-  ],
+  features: string[]
 }
 
 const INCLUDED_IN_ALL_PAID = [
   'Works on all major ATS systems (Workday, Greenhouse, Lever, iCIMS, Taleo and more)',
   'Application status tracking and job tracker dashboard',
   'Resume profile storage',
-  '30-day money-back guarantee',
   'Email support',
 ]
 
 export default function PricingPage() {
   const { isAuthenticated, subscription } = useAuth()
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
-  const currentPlan = isAuthenticated ? (subscription?.plan ?? 'FREE').toLowerCase() : null
+  const currentPlan = isAuthenticated ? (subscription?.plan ?? 'FORGE').toLowerCase() : null
   const currentInterval = subscription?.billingCycle === 'YEARLY' ? 'year' : 'month'
 
   const { data: rawPlans, isLoading: pricesLoading } = useStripePricing()
@@ -61,7 +35,7 @@ export default function PricingPage() {
     if (!rawPlans) return {}
     const data: Record<string, PlanPriceData> = {}
     for (const plan of rawPlans) {
-      if (!data[plan.id]) data[plan.id] = {}
+      if (!data[plan.id]) data[plan.id] = { features: plan.features ?? [] }
       if (plan.interval === 'month') {
         data[plan.id].monthly = { price: plan.price, priceId: plan.stripePriceId }
       } else if (plan.interval === 'year') {
@@ -76,8 +50,8 @@ export default function PricingPage() {
   }, [rawPlans])
 
   const handleSelectPlan = async (planId: string, priceId?: string) => {
-    if (planId === 'free') {
-      window.location.href = isAuthenticated ? '/dashboard' : '/login?plan=free'
+    if (planId === 'forge') {
+      window.location.href = isAuthenticated ? '/dashboard' : '/login?plan=forge'
       return
     }
     if (!isAuthenticated) {
@@ -108,15 +82,17 @@ export default function PricingPage() {
 
   const plans = [
     {
-      id: 'free',
-      name: 'Free',
+      id: 'forge',
+      name: 'Forge',
       badge: null as string | null,
-      description: 'Start applying automatically, no credit card needed.',
+      description: 'Experience JobsFoundry and start building momentum.',
       stripe: 'bg-slate-400',
       accent: 'text-slate-700',
+      btnLabel: 'Begin',
+      btnSub: 'Activate your search with focused support.',
       btnCls: 'bg-slate-900 hover:bg-slate-700 text-white',
       cardCls: 'border-slate-200',
-      features: PLAN_INCLUDES.free,
+      features: priceData.forge?.features ?? [],
       monthly: 0,
       annualPerMonth: null as number | null,
       annualTotal: null as number | null,
@@ -124,36 +100,58 @@ export default function PricingPage() {
       annualPriceId: undefined as string | undefined,
     },
     {
-      id: 'pro',
-      name: 'Pro',
-      badge: 'Most popular',
-      description: 'For active job seekers who want real results fast.',
+      id: 'craft',
+      name: 'Craft',
+      badge: null as string | null,
+      description: 'For job seekers who want consistent support.',
       stripe: 'bg-blue-accent',
       accent: 'text-navy',
+      btnLabel: 'Build',
+      btnSub: 'Advance your search with steady momentum.',
       btnCls: 'bg-blue-accent hover:bg-blue-accent-hover text-navy font-bold shadow-lg',
-      cardCls: 'border-navy ring-2 ring-navy/20',
-      features: PLAN_INCLUDES.pro,
-      monthly: priceData.pro?.monthly?.price ?? 9.99,
-      annualPerMonth: priceData.pro?.annual?.perMonth ?? null,
-      annualTotal: priceData.pro?.annual?.total ?? null,
-      monthlyPriceId: priceData.pro?.monthly?.priceId,
-      annualPriceId: priceData.pro?.annual?.priceId,
+      cardCls: 'border-slate-200',
+      features: priceData.craft?.features ?? [],
+      monthly: priceData.craft?.monthly?.price ?? 49.99,
+      annualPerMonth: priceData.craft?.annual?.perMonth ?? null,
+      annualTotal: priceData.craft?.annual?.total ?? null,
+      monthlyPriceId: priceData.craft?.monthly?.priceId,
+      annualPriceId: priceData.craft?.annual?.priceId,
     },
     {
-      id: 'business',
-      name: 'Business',
-      badge: null,
-      description: 'Max volume, outreach automation, and A/B testing.',
+      id: 'launch',
+      name: 'Launch',
+      badge: 'Most popular',
+      description: 'For active job seekers ready to accelerate their search.',
       stripe: 'bg-navy',
       accent: 'text-navy',
+      btnLabel: 'Boost',
+      btnSub: 'Accelerate your search with broader reach.',
+      btnCls: 'bg-blue-accent hover:bg-blue-accent-hover text-navy font-bold shadow-lg',
+      cardCls: 'border-navy ring-2 ring-navy/20',
+      features: priceData.launch?.features ?? [],
+      monthly: priceData.launch?.monthly?.price ?? 99.99,
+      annualPerMonth: priceData.launch?.annual?.perMonth ?? null,
+      annualTotal: priceData.launch?.annual?.total ?? null,
+      monthlyPriceId: priceData.launch?.monthly?.priceId,
+      annualPriceId: priceData.launch?.annual?.priceId,
+    },
+    {
+      id: 'momentum',
+      name: 'Momentum',
+      badge: null as string | null,
+      description: 'For job seekers who do not want to miss a qualified opportunity.',
+      stripe: 'bg-navy',
+      accent: 'text-navy',
+      btnLabel: 'Beyond',
+      btnSub: 'Amplify your reach with complete coverage.',
       btnCls: 'bg-blue-accent hover:bg-blue-accent-hover text-navy',
       cardCls: 'border-slate-200',
-      features: PLAN_INCLUDES.business,
-      monthly: priceData.business?.monthly?.price ?? 25,
-      annualPerMonth: priceData.business?.annual?.perMonth ?? null,
-      annualTotal: priceData.business?.annual?.total ?? null,
-      monthlyPriceId: priceData.business?.monthly?.priceId,
-      annualPriceId: priceData.business?.annual?.priceId,
+      features: priceData.momentum?.features ?? [],
+      monthly: priceData.momentum?.monthly?.price ?? 199.99,
+      annualPerMonth: priceData.momentum?.annual?.perMonth ?? null,
+      annualTotal: priceData.momentum?.annual?.total ?? null,
+      monthlyPriceId: priceData.momentum?.monthly?.priceId,
+      annualPriceId: priceData.momentum?.annual?.priceId,
     },
   ]
 
@@ -194,10 +192,10 @@ export default function PricingPage() {
           )}
 
           {/* Cards */}
-          <div className="grid md:grid-cols-3 gap-6 mb-20">
+          <div className="grid grid-cols-4 gap-6 mb-20">
             {plans.filter(plan => {
               if (!annual) return true
-              if (plan.id === 'free') return true
+              if (plan.id === 'forge') return true
               return plan.annualPerMonth != null
             }).map(plan => {
               const showAnnual = annual && plan.annualPerMonth != null
@@ -226,15 +224,15 @@ export default function PricingPage() {
                     {/* Price */}
                     <div className="mb-7">
                       <div className="flex items-end gap-1">
-                        {pricesLoading && plan.id !== 'free' ? (
+                        {pricesLoading && plan.id !== 'forge' ? (
                           <span className="inline-block w-20 h-8 bg-slate-200 rounded-lg animate-pulse" />
                         ) : (
                           <>
                             <span className="text-4xl font-extrabold text-navy">
-                              {plan.id === 'free' ? '$0' : `$${displayPrice}`}
+                              {plan.id === 'forge' ? '$0' : `$${displayPrice}`}
                             </span>
                             <span className="text-base font-semibold text-slate-500 mb-1 ml-1">
-                              {plan.id === 'free' ? 'forever' : '/mo'}
+                              {plan.id === 'forge' ? 'forever' : '/mo'}
                             </span>
                           </>
                         )}
@@ -247,7 +245,7 @@ export default function PricingPage() {
                     </div>
 
                     {/* Features */}
-                    <ul className="space-y-3 mb-8 flex-1">
+                    <ul className="space-y-3">
                       {plan.features.map(f => (
                         <li key={f} className="flex items-start gap-2.5 text-sm font-medium text-slate-800">
                           <CheckCircleIcon className={`flex-shrink-0 mt-0.5 ${plan.accent}`} style={{ width: 18, height: 18 }} />
@@ -255,6 +253,9 @@ export default function PricingPage() {
                         </li>
                       ))}
                     </ul>
+
+                    {/* Spacer — absorbs remaining height, minimum gap guaranteed */}
+                    <div className="flex-1 min-h-6" />
 
                     {/* CTA */}
                     <button
@@ -268,10 +269,11 @@ export default function PricingPage() {
                           Loading…
                         </span>
                       ) : isCurrent(plan.id, interval) ? 'Current plan'
-                        : plan.id === 'free' ? 'Get Started Free'
-                        : plan.id === 'pro' ? 'Start Pro'
-                        : 'Start Business'}
+                        : plan.btnLabel}
                     </button>
+                    <p className="text-center text-sm text-slate-600 mt-2 leading-snug h-8">
+                      {!isCurrent(plan.id, interval) ? plan.btnSub : ''}
+                    </p>
                   </div>
                 </div>
               )
@@ -281,7 +283,7 @@ export default function PricingPage() {
           {/* Included in every paid plan */}
           <section className="mb-16">
             <h2 className="text-2xl font-bold text-navy mb-2">Included in every paid plan</h2>
-            <p className="text-slate-700 text-sm font-medium mb-6">These come with Pro and Business at no extra charge.</p>
+            <p className="text-slate-700 text-sm font-medium mb-6">These come with Craft, Launch, and Momentum at no extra charge.</p>
             <div className="border border-slate-200 rounded-2xl overflow-hidden">
               {INCLUDED_IN_ALL_PAID.map((item, i) => (
                 <div

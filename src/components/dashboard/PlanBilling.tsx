@@ -9,8 +9,8 @@ import type { PlanOption } from '@/types/pricing'
 
 export default function PlanBilling() {
   const { subscription } = useAuth()
-  const plan = subscription?.plan ?? 'FREE'
-  const isFreePlan = subscription !== null ? plan === 'FREE' : false
+  const plan = subscription?.plan ?? 'FORGE'
+  const isFreePlan = subscription !== null ? plan === 'FORGE' : false
 
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
 
@@ -119,7 +119,7 @@ export default function PlanBilling() {
                   className={`w-full text-xs font-semibold py-2.5 rounded-lg transition-all duration-150 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer select-none ${
                     isFree
                       ? 'bg-slate-100 text-slate-500 cursor-not-allowed'
-                      : plan === 'FREE' || (plan === 'PRO' && p.id === 'business')
+                      : p.price > (plans.find(x => x.id === plan.toLowerCase())?.price ?? 0)
                       ? 'bg-blue-accent hover:bg-blue-accent-hover text-navy font-bold hover:shadow-md'
                       : 'bg-slate-900 hover:bg-slate-700 text-white hover:shadow-md'
                   }`}
@@ -131,7 +131,7 @@ export default function PlanBilling() {
                     </span>
                   ) : isFree ? (
                     'Downgrade via support'
-                  ) : plan === 'FREE' || (plan === 'PRO' && p.id === 'business') ? (
+                  ) : p.price > (plans.find(x => x.id === plan.toLowerCase())?.price ?? 0) ? (
                     `Upgrade to ${p.name}`
                   ) : (
                     `Switch to ${p.name}`

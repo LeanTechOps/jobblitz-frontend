@@ -13,14 +13,15 @@ import ApplicationCard from '@/components/dashboard/ApplicationCard'
 import Logo from '@/components/Logo'
 
 const PLAN_BADGE_COLOR: Record<string, string> = {
-  FREE:     'bg-slate-100 text-slate-700',
-  PRO_FREE: 'bg-amber-50 text-amber-700 border border-amber-200',
-  PRO:      'bg-blue-muted text-navy',
-  BUSINESS: 'bg-navy text-white',
+  FORGE:      'bg-slate-100 text-slate-700',
+  FORGE_FREE: 'bg-amber-50 text-amber-700 border border-amber-200',
+  CRAFT:      'bg-blue-muted text-navy',
+  LAUNCH:     'bg-blue-accent text-navy',
+  MOMENTUM:   'bg-navy text-white',
 }
 
 const PLAN_DISPLAY_NAME: Record<string, string> = {
-  PRO_FREE: 'Trial',
+  FORGE_FREE: 'Trial',
 }
 
 export default function DashboardPage() {
@@ -41,7 +42,7 @@ export default function DashboardPage() {
   }
 
   const firstName = user.firstName ?? user.email.split('@')[0]
-  const plan = subscription?.plan ?? 'FREE'
+  const plan = subscription?.plan ?? 'FORGE'
 
   const totalApps  = applications.length
   const interviews = applications.filter((a) => a.status === 'INTERVIEW').length
@@ -58,7 +59,7 @@ export default function DashboardPage() {
           </Link>
           <div className="flex items-center gap-4">
             {subscription !== null ? (
-              <span className={`text-xs font-bold px-2.5 py-1 rounded-full cursor-default select-none ${PLAN_BADGE_COLOR[plan] ?? PLAN_BADGE_COLOR.FREE}`}>
+              <span className={`text-xs font-bold px-2.5 py-1 rounded-full cursor-default select-none ${PLAN_BADGE_COLOR[plan] ?? PLAN_BADGE_COLOR.FORGE}`}>
                 {PLAN_DISPLAY_NAME[plan] ?? plan}
               </span>
             ) : (
@@ -197,9 +198,9 @@ export default function DashboardPage() {
                   {PLAN_DISPLAY_NAME[plan] ?? (plan.charAt(0) + plan.slice(1).toLowerCase())} Plan
                 </p>
                 <p className="text-sm font-medium text-slate-700 mt-0.5">
-                  {plan === 'FREE'
+                  {plan === 'FORGE'
                     ? 'Upgrade to unlock more applications and AI features.'
-                    : plan === 'PRO_FREE'
+                    : plan === 'FORGE_FREE'
                     ? 'You are on a free trial. Upgrade to keep access after it ends.'
                     : 'Manage your subscription, invoices and billing details.'}
                 </p>
@@ -209,7 +210,7 @@ export default function DashboardPage() {
               href="/pricing"
               className="flex-shrink-0 inline-flex items-center gap-2 bg-blue-accent hover:bg-blue-accent-hover text-navy text-sm font-bold px-5 py-3 rounded-xl transition-all duration-150 active:scale-95 hover:shadow-md cursor-pointer"
             >
-              {plan === 'FREE' || plan === 'PRO_FREE' ? 'Upgrade Plan' : 'Manage Billing'}
+              {plan === 'FORGE' || plan === 'FORGE_FREE' ? 'Upgrade Plan' : 'Manage Billing'}
               <ArrowRightIcon className="w-4 h-4" />
             </Link>
           </div>

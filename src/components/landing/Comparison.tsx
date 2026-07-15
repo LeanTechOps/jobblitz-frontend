@@ -116,7 +116,7 @@ export default function Comparison() {
         {/* CTA */}
         <div className="text-center">
           <Link
-            href="/login?plan=free"
+            href="/login?plan=forge"
             className="group inline-flex items-center gap-2 bg-blue-accent hover:bg-blue-accent-hover active:scale-[0.98] text-navy font-bold px-8 py-4 rounded-xl transition-all duration-150 text-base shadow-lg hover:shadow-xl cursor-pointer select-none"
           >
             Start for Free — No Credit Card Required

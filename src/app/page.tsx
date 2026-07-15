@@ -57,7 +57,7 @@ export default function LandingPage() {
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
-                href="/login?plan=free"
+                href="/login?plan=forge"
                 className="group inline-flex items-center gap-2 bg-white hover:bg-slate-50 active:scale-[0.98] text-navy font-semibold px-8 py-3.5 rounded-lg transition-all duration-150 text-sm shadow-xl hover:shadow-2xl cursor-pointer select-none"
               >
                 Get Started Free

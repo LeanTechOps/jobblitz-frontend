@@ -103,7 +103,7 @@ export default function Hero() {
           className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8"
         >
           <Link
-            href="/login?plan=free"
+            href="/login?plan=forge"
             className="group inline-flex items-center gap-2 bg-blue-accent hover:bg-blue-accent-hover active:scale-95 text-navy font-bold px-8 py-4 rounded-xl transition-all duration-150 shadow-lg hover:shadow-xl text-base cursor-pointer select-none"
           >
             Get Started Free
