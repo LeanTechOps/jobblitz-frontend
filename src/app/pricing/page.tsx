@@ -219,7 +219,7 @@ export default function PricingPage() {
                         </span>
                       )}
                     </div>
-                    <p className="text-sm font-medium text-slate-600 mb-6 leading-relaxed">{plan.description}</p>
+                    <p className="text-sm font-medium text-slate-600 mb-6 leading-relaxed line-clamp-2 min-h-[2.75rem]">{plan.description}</p>
 
                     {/* Price */}
                     <div className="mb-7">
@@ -244,6 +244,24 @@ export default function PricingPage() {
                       )}
                     </div>
 
+                    {/* CTA */}
+                    <p className="text-center text-sm text-slate-600 mb-4 leading-snug h-8">
+                      {!isCurrent(plan.id, interval) ? plan.btnSub : ''}
+                    </p>
+                    <button
+                      onClick={() => handleSelectPlan(plan.id, priceId)}
+                      disabled={isCurrent(plan.id, interval) || loadingPlan === priceId}
+                      className={`w-full text-sm font-bold px-4 py-4 mb-6 rounded-xl transition-all duration-150 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${plan.btnCls}`}
+                    >
+                      {loadingPlan === priceId ? (
+                        <span className="inline-flex items-center justify-center gap-1.5">
+                          <span className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                          Loading…
+                        </span>
+                      ) : isCurrent(plan.id, interval) ? 'Current plan'
+                        : plan.btnLabel}
+                    </button>
+
                     {/* Features */}
                     <ul className="space-y-3">
                       {plan.features.map(f => (
@@ -254,26 +272,8 @@ export default function PricingPage() {
                       ))}
                     </ul>
 
-                    {/* Spacer — absorbs remaining height, minimum gap guaranteed */}
-                    <div className="flex-1 min-h-6" />
-
-                    {/* CTA */}
-                    <button
-                      onClick={() => handleSelectPlan(plan.id, priceId)}
-                      disabled={isCurrent(plan.id, interval) || loadingPlan === priceId}
-                      className={`w-full text-sm font-bold px-4 py-3 rounded-xl transition-all duration-150 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${plan.btnCls}`}
-                    >
-                      {loadingPlan === priceId ? (
-                        <span className="inline-flex items-center justify-center gap-1.5">
-                          <span className="w-3.5 h-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                          Loading…
-                        </span>
-                      ) : isCurrent(plan.id, interval) ? 'Current plan'
-                        : plan.btnLabel}
-                    </button>
-                    <p className="text-center text-sm text-slate-600 mt-2 leading-snug h-8">
-                      {!isCurrent(plan.id, interval) ? plan.btnSub : ''}
-                    </p>
+                    {/* Spacer — absorbs remaining height, keeps card bottoms aligned */}
+                    <div className="flex-1 min-h-4" />
                   </div>
                 </div>
               )
