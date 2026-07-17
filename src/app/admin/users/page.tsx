@@ -16,8 +16,6 @@ const ROLE_PILL: Record<string, string> = {
 
 const PLAN_PILL: Record<string, string> = {
   FORGE: 'bg-navy/10 text-navy',
-  FORGE_FREE: 'bg-amber-50 text-amber-700 font-semibold border border-amber-200',
-  CRAFT: 'bg-blue-muted text-navy font-bold',
   LAUNCH: 'bg-blue-accent text-navy font-bold',
   MOMENTUM: 'bg-orange-100 text-orange-800 font-bold',
 }
@@ -29,7 +27,7 @@ const VISA_LABELS: Record<string, string> = {
 }
 
 const VISA_TYPES = Object.keys(VISA_LABELS)
-const PLANS = ['FORGE', 'FORGE_FREE', 'CRAFT', 'LAUNCH', 'MOMENTUM']
+const PLANS = ['FORGE', 'LAUNCH', 'MOMENTUM']
 
 const inputCls =
   'border border-navy/15 rounded-xl px-3 py-2 text-sm text-navy bg-white focus:outline-none focus:ring-2 focus:ring-blue-accent/50 focus:border-navy transition-colors placeholder:text-navy/35'

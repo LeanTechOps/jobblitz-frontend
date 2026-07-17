@@ -13,15 +13,9 @@ import ApplicationCard from '@/components/dashboard/ApplicationCard'
 import Logo from '@/components/Logo'
 
 const PLAN_BADGE_COLOR: Record<string, string> = {
-  FORGE:      'bg-slate-100 text-slate-700',
-  FORGE_FREE: 'bg-amber-50 text-amber-700 border border-amber-200',
-  CRAFT:      'bg-blue-muted text-navy',
-  LAUNCH:     'bg-blue-accent text-navy',
-  MOMENTUM:   'bg-navy text-white',
-}
-
-const PLAN_DISPLAY_NAME: Record<string, string> = {
-  FORGE_FREE: 'Trial',
+  FORGE:    'bg-slate-100 text-slate-700',
+  LAUNCH:   'bg-blue-accent text-navy',
+  MOMENTUM: 'bg-navy text-white',
 }
 
 export default function DashboardPage() {
@@ -60,7 +54,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-4">
             {subscription !== null ? (
               <span className={`text-xs font-bold px-2.5 py-1 rounded-full cursor-default select-none ${PLAN_BADGE_COLOR[plan] ?? PLAN_BADGE_COLOR.FORGE}`}>
-                {PLAN_DISPLAY_NAME[plan] ?? plan}
+                {plan}
               </span>
             ) : (
               <span className="inline-block w-14 h-5 rounded-full bg-slate-100 animate-pulse" />
@@ -195,13 +189,11 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-lg font-bold text-navy">
-                  {PLAN_DISPLAY_NAME[plan] ?? (plan.charAt(0) + plan.slice(1).toLowerCase())} Plan
+                  {plan.charAt(0) + plan.slice(1).toLowerCase()} Plan
                 </p>
                 <p className="text-sm font-medium text-slate-700 mt-0.5">
                   {plan === 'FORGE'
-                    ? 'Upgrade to unlock more applications and AI features.'
-                    : plan === 'FORGE_FREE'
-                    ? 'You are on a free trial. Upgrade to keep access after it ends.'
+                    ? 'You are on a free trial. Upgrade to unlock more applications and AI features.'
                     : 'Manage your subscription, invoices and billing details.'}
                 </p>
               </div>
@@ -210,7 +202,7 @@ export default function DashboardPage() {
               href="/pricing"
               className="flex-shrink-0 inline-flex items-center gap-2 bg-blue-accent hover:bg-blue-accent-hover text-navy text-sm font-bold px-5 py-3 rounded-xl transition-all duration-150 active:scale-95 hover:shadow-md cursor-pointer"
             >
-              {plan === 'FORGE' || plan === 'FORGE_FREE' ? 'Upgrade Plan' : 'Manage Billing'}
+              {plan === 'FORGE' ? 'Upgrade Plan' : 'Manage Billing'}
               <ArrowRightIcon className="w-4 h-4" />
             </Link>
           </div>

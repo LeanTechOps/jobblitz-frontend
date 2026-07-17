@@ -11,8 +11,6 @@ import {
 
 const PLAN_PILL: Record<string, string> = {
   FORGE: 'bg-navy/10 text-navy',
-  FORGE_FREE: 'bg-amber-50 text-amber-700 font-semibold border border-amber-200',
-  CRAFT: 'bg-blue-muted text-navy font-bold',
   LAUNCH: 'bg-blue-accent text-navy font-bold',
   MOMENTUM: 'bg-orange-100 text-orange-800 font-bold',
 }
@@ -47,9 +45,9 @@ export default function ManagerDashboardPage() {
     },
     {
       label: 'Paid Subscribers',
-      value: (stats.plans['CRAFT'] ?? 0) + (stats.plans['LAUNCH'] ?? 0) + (stats.plans['MOMENTUM'] ?? 0),
+      value: (stats.plans['LAUNCH'] ?? 0) + (stats.plans['MOMENTUM'] ?? 0),
       icon: SparklesIcon,
-      href: '/manager/users?plan=CRAFT',
+      href: '/manager/users?plan=LAUNCH',
       accent: 'bg-peach-muted text-peach',
     },
   ]

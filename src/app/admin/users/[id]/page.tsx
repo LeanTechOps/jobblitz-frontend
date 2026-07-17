@@ -18,8 +18,6 @@ import {
 
 const PLAN_PILL: Record<string, string> = {
   FORGE: 'bg-slate-200 text-slate-800 font-semibold',
-  FORGE_FREE: 'bg-amber-50 text-amber-700 font-bold border border-amber-200',
-  CRAFT: 'bg-blue-muted text-navy font-bold',
   LAUNCH: 'bg-blue-accent text-navy font-bold',
   MOMENTUM: 'bg-navy text-white font-bold',
 }

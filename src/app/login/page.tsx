@@ -27,11 +27,6 @@ const PLAN_CONTEXT: Record<string, { badge: string; heading: string; sub: string
     heading: 'Start your free plan',
     sub: 'No credit card required. Start automating your job search in seconds.',
   },
-  craft: {
-    badge: 'Craft Plan',
-    heading: 'Choose Craft — free to start',
-    sub: 'Sign in to try JobsFoundry free. Upgrade to Craft anytime for up to 3–5 applications per day.',
-  },
   launch: {
     badge: 'Launch Plan',
     heading: 'Accelerate your search — free to start',

@@ -75,47 +75,30 @@ export default function PricingPage() {
   const hasAnyAnnual = !pricesLoading && Object.values(priceData).some(p => p.annual != null)
   const isCurrent = (planId: string, interval: 'month' | 'year' = 'month') =>
     currentPlan === planId && currentInterval === interval
+  // Once a user has upgraded to a paid plan, the free Forge trial no longer applies to them.
+  const isForgeLocked = (planId: string) =>
+    planId === 'forge' && isAuthenticated && currentPlan !== 'forge'
 
-  const PriceSkeleton = () => (
-    <span className="inline-block w-20 h-7 bg-slate-200 rounded-lg animate-pulse align-middle" />
-  )
 
   const plans = [
     {
       id: 'forge',
       name: 'Forge',
-      badge: null as string | null,
-      description: 'Experience JobsFoundry and start building momentum.',
+      badge: '15-day free trial' as string | null,
+      description: 'Experience JobsFoundry free for 15 days, no credit card required.',
       stripe: 'bg-slate-400',
       accent: 'text-slate-700',
       btnLabel: 'Begin',
       btnSub: 'Activate your search with focused support.',
       btnCls: 'bg-slate-900 hover:bg-slate-700 text-white',
       cardCls: 'border-slate-200',
+      volumeNote: null as string | null,
       features: priceData.forge?.features ?? [],
       monthly: 0,
       annualPerMonth: null as number | null,
       annualTotal: null as number | null,
       monthlyPriceId: undefined as string | undefined,
       annualPriceId: undefined as string | undefined,
-    },
-    {
-      id: 'craft',
-      name: 'Craft',
-      badge: null as string | null,
-      description: 'For job seekers who want consistent support.',
-      stripe: 'bg-blue-accent',
-      accent: 'text-navy',
-      btnLabel: 'Build',
-      btnSub: 'Advance your search with steady momentum.',
-      btnCls: 'bg-blue-accent hover:bg-blue-accent-hover text-navy font-bold shadow-lg',
-      cardCls: 'border-slate-200',
-      features: priceData.craft?.features ?? [],
-      monthly: priceData.craft?.monthly?.price ?? 49.99,
-      annualPerMonth: priceData.craft?.annual?.perMonth ?? null,
-      annualTotal: priceData.craft?.annual?.total ?? null,
-      monthlyPriceId: priceData.craft?.monthly?.priceId,
-      annualPriceId: priceData.craft?.annual?.priceId,
     },
     {
       id: 'launch',
@@ -128,6 +111,7 @@ export default function PricingPage() {
       btnSub: 'Accelerate your search with broader reach.',
       btnCls: 'bg-blue-accent hover:bg-blue-accent-hover text-navy font-bold shadow-lg',
       cardCls: 'border-navy ring-2 ring-navy/20',
+      volumeNote: '*Launch is designed to achieve 150+ submitted applications during an active subscription.',
       features: priceData.launch?.features ?? [],
       monthly: priceData.launch?.monthly?.price ?? 99.99,
       annualPerMonth: priceData.launch?.annual?.perMonth ?? null,
@@ -146,6 +130,7 @@ export default function PricingPage() {
       btnSub: 'Amplify your reach with complete coverage.',
       btnCls: 'bg-blue-accent hover:bg-blue-accent-hover text-navy',
       cardCls: 'border-slate-200',
+      volumeNote: '*Momentum is designed to achieve 250+ submitted applications during an active subscription.',
       features: priceData.momentum?.features ?? [],
       monthly: priceData.momentum?.monthly?.price ?? 199.99,
       annualPerMonth: priceData.momentum?.annual?.perMonth ?? null,
@@ -192,7 +177,7 @@ export default function PricingPage() {
           )}
 
           {/* Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
             {plans.filter(plan => {
               if (!annual) return true
               if (plan.id === 'forge') return true
@@ -232,7 +217,7 @@ export default function PricingPage() {
                               {plan.id === 'forge' ? '$0' : `$${displayPrice}`}
                             </span>
                             <span className="text-base font-semibold text-slate-500 mb-1 ml-1">
-                              {plan.id === 'forge' ? 'forever' : '/mo'}
+                              {plan.id === 'forge' ? 'for 15 days' : '/mo'}
                             </span>
                           </>
                         )}
@@ -246,11 +231,11 @@ export default function PricingPage() {
 
                     {/* CTA */}
                     <p className="text-center text-sm text-slate-600 mb-4 leading-snug h-8">
-                      {!isCurrent(plan.id, interval) ? plan.btnSub : ''}
+                      {!isCurrent(plan.id, interval) && !isForgeLocked(plan.id) ? plan.btnSub : ''}
                     </p>
                     <button
                       onClick={() => handleSelectPlan(plan.id, priceId)}
-                      disabled={isCurrent(plan.id, interval) || loadingPlan === priceId}
+                      disabled={isCurrent(plan.id, interval) || isForgeLocked(plan.id) || loadingPlan === priceId}
                       className={`w-full text-sm font-bold px-4 py-4 mb-6 rounded-xl transition-all duration-150 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${plan.btnCls}`}
                     >
                       {loadingPlan === priceId ? (
@@ -259,6 +244,7 @@ export default function PricingPage() {
                           Loading…
                         </span>
                       ) : isCurrent(plan.id, interval) ? 'Current plan'
+                        : isForgeLocked(plan.id) ? 'Already upgraded'
                         : plan.btnLabel}
                     </button>
 
@@ -272,6 +258,10 @@ export default function PricingPage() {
                       ))}
                     </ul>
 
+                    {plan.volumeNote && (
+                      <p className="text-sm italic font-semibold text-slate-900 mt-4 leading-snug">{plan.volumeNote}</p>
+                    )}
+
                     {/* Spacer — absorbs remaining height, keeps card bottoms aligned */}
                     <div className="flex-1 min-h-4" />
                   </div>
@@ -283,7 +273,7 @@ export default function PricingPage() {
           {/* Included in every paid plan */}
           <section className="mb-16">
             <h2 className="text-2xl font-bold text-navy mb-2">Included in every paid plan</h2>
-            <p className="text-slate-700 text-sm font-medium mb-6">These come with Craft, Launch, and Momentum at no extra charge.</p>
+            <p className="text-slate-700 text-sm font-medium mb-6">These come with Launch and Momentum at no extra charge.</p>
             <div className="border border-slate-200 rounded-2xl overflow-hidden">
               {INCLUDED_IN_ALL_PAID.map((item, i) => (
                 <div
@@ -299,6 +289,9 @@ export default function PricingPage() {
 
           {/* Billing notes */}
           <div className="border-t border-slate-200 pt-10 text-sm text-slate-700 space-y-2 leading-relaxed">
+            <p className="text-sm italic font-semibold text-slate-900">
+              *Actual submission volume depends on the availability of relevant opportunities that match your experience, preferences, location, and eligibility.
+            </p>
             <p>
               Billing terms, taxes and renewals are documented in{' '}
               <Link href="#" className="text-navy font-semibold hover:underline">pricing &amp; billing</Link>;
