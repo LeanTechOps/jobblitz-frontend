@@ -216,9 +216,11 @@ export default function PricingPage() {
                             <span className="text-4xl font-extrabold text-navy">
                               {plan.id === 'forge' ? '$0' : `$${displayPrice}`}
                             </span>
-                            <span className="text-base font-semibold text-slate-500 mb-1 ml-1">
-                              {plan.id === 'forge' ? 'for 15 days' : '/mo'}
-                            </span>
+                            {plan.id !== 'forge' && (
+                              <span className="text-base font-semibold text-slate-500 mb-1 ml-1">
+                                /mo
+                              </span>
+                            )}
                           </>
                         )}
                       </div>
